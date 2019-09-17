@@ -325,7 +325,7 @@ while True:
     # check to see if we should write the frame to disk
     #frame = imutils.resize(frame, width=1920, height=480)
     frame = cv2.resize(frame, (1820,380))
-    cv2.putText(frame, 'frame :'+str(frame_number), (200, 200), cv2.FONT_HERSHEY_SIMPLEX, 3, (255,0,0), 5, cv2.LINE_AA)
+    cv2.putText(frame, 'frame :'+str(frame_number), (80, 80), cv2.FONT_HERSHEY_SIMPLEX, 1, (255,0,0), 2, cv2.LINE_AA)
 
     if writer is not None:
         print('[DEBUG] --> writing frame')
