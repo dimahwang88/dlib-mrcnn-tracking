@@ -282,7 +282,7 @@ while True:
                 t, label = trackers[active_tracks_index[row]]
                 d = detections[col]
 
-                if label == 13:
+                if label == str(13):
                     #print('cost for label 13 ')
                     print(cost_mtx[row])
 
