@@ -284,6 +284,7 @@ while True:
                 d = detections[col]
 
                 if label == 13:
+                    print('cost for label 13 ')
                     print(cost_mtx[row])
 
                 rect = dlib.rectangle(d[0], d[1], d[2], d[3])
@@ -325,7 +326,7 @@ while True:
     # check to see if we should write the frame to disk
     #frame = imutils.resize(frame, width=1920, height=480)
     frame = cv2.resize(frame, (1820,380))
-    cv2.putText(frame,'frame :'+str(frame_number), (1000,200), cv2.FONT_HERSHEY_SIMPLEX, 5, (255,0,0), 5, cv2.LINE_AA)
+    cv2.putText(frame, 'frame :'+str(frame_number), (200, 200), cv2.FONT_HERSHEY_SIMPLEX, 3, (255,0,0), 5, cv2.LINE_AA)
 
     if writer is not None:
         print('[DEBUG] --> writing frame')
