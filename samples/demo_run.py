@@ -189,7 +189,7 @@ while True:
     id_labels = random.sample(range(1, 1000), 100)
 
     #if len(trackers) == 0:  
-    if frame_number == 1 or frame_number % 12 == 0:
+    if frame_number == 1 or frame_number % 8 == 0:
         detections = []
 
         det_start = time.time()
@@ -282,8 +282,8 @@ while True:
                 t, label = trackers[active_tracks_index[row]]
                 d = detections[col]
 
-                if label == 13:
-                    print('cost for label 13 ')
+                if frame_number == 144 and label == 16:
+                    #print('cost for label 13 ')
                     print(cost_mtx[row])
 
                 rect = dlib.rectangle(d[0], d[1], d[2], d[3])
@@ -320,7 +320,7 @@ while True:
             cv2.putText(frame, l, (startX, startY - 8), cv2.FONT_HERSHEY_SIMPLEX, 1.5, (255, 0, 0), 3)
         cf_track_end = time.time()
 
-        print('CF tracker processing time: ' + str(cf_track_end-cf_track_start) + ' s.')
+        #print('CF tracker processing time: ' + str(cf_track_end-cf_track_start) + ' s.')
 
     # check to see if we should write the frame to disk
     #frame = imutils.resize(frame, width=1920, height=480)
