@@ -298,8 +298,8 @@ while True:
         cf_track_start = time.time()
         # loop over each of the trackers
         for i in range(len(trackers)):
-            if i not in active_tracks_index:
-                continue
+            #if i not in active_tracks_index:
+            #    continue
             tup = trackers[i]
             
             t = tup[0]
