@@ -165,7 +165,6 @@ while True:
     # grab the next frame from the video file
     print('[DEBUG] --> reading frame ' + str(frame_number))
     (grabbed, frame) = vs.read()
-    print('[DEBUG] --> done reading frame')
     
     # check to see if we have reached the end of the video file
     if frame is None:
