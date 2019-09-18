@@ -122,7 +122,7 @@ active_tracks_index = []
 fps = FPS().start()
 frame_number = 0
 
-EUCL_THRESH = 15
+EUCL_THRESH = 23
 DIST_INFINITE = 10000
 
 def all_same(items):
