@@ -267,7 +267,7 @@ while True:
 
             for i in range(len(trackers)):
                 cost_row = cost_mtx[i]
-                if np.all(cost_row == cost_row[0], axis=0):
+                if np.all(cost_row == DIST_INFINITE, axis=0):
                     del_rows.append(i)
                 else:
                     active_tracks_index.append(i)
