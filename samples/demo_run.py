@@ -272,7 +272,9 @@ while True:
                 else:
                     active_tracks_index.append(i)
             
+            print(cost_mtx.shape)
             cost_mtx = np.delete(cost_mtx, del_rows, axis=0)
+            print(cost_mtx.shape)
 
             # indices contains row -> col assignments
             indices = linear_assignment(cost_mtx)
