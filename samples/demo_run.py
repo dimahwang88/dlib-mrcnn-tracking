@@ -281,33 +281,27 @@ while True:
                 t, label = trackers[active_tracks_index[row]]
                 d = detections[col]
 
-                if label == str(13):
-                    print(active_tracks_index, len(active_tracks_index))
-                    print(cost_mtx.shape)
-                    print(len(indices))
-                    print(cost_mtx[row])
-                    print('detection pos')
-                    print([d[0], d[1], d[2], d[3]])
-                    print('track 13 position')
-                    print(t.get_position())
+//////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////
+# Work-around
+                t_pos = t.get_position()
 
-                    t_pos = t.get_position()
+                sX = int(t_pos.left())
+                sY = int(t_pos.top())
+                eX = int(t_pos.right())
+                eY = int(t_pos.bottom())
 
-                    sX = int(t_pos.left())
-                    sY = int(t_pos.top())
-                    eX = int(t_pos.right())
-                    eY = int(t_pos.bottom())
+                bx = sX / 2
+                by = eY
 
-                    bx = sX / 2
-                    by = eY
+                dbx = d[0] / 2
+                dby = d[3]
 
-                    dbx = d[0] / 2
-                    dby = d[3]
+                pt1 = np.asarray([bx, by], dtype=np.float)
+                pt2 = np.asarray([dbx, dby], dtype=np.float)
 
-                    pt1 = np.asarray([bx, by], dtype=np.float)
-                    pt2 = np.asarray([dbx, dby], dtype=np.float)
-                    print('eucl dist: ')
-                    print(_distance(pt1, pt2))
+                if _distance(pt1, pt2) > EUCL_THRESH:
+                    continue
+//////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////
 
                 rect = dlib.rectangle(d[0], d[1], d[2], d[3])
                 t.start_track(rgb, rect)
