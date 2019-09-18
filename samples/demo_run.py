@@ -285,6 +285,10 @@ while True:
                 if label == str(13):
                     #print('cost for label 13 ')
                     print(cost_mtx[row])
+                    print('detection pos')
+                    print([d[0], d[1]), (d[2], d[3]])
+                    print('track 13 position')
+                    print(t.get_position())
 
                 rect = dlib.rectangle(d[0], d[1], d[2], d[3])
                 t.start_track(rgb, rect)
@@ -298,8 +302,9 @@ while True:
         cf_track_start = time.time()
         # loop over each of the trackers
         for i in range(len(trackers)):
-            #if i not in active_tracks_index:
-            #    continue
+            if i not in active_tracks_index:
+                continue
+            
             tup = trackers[i]
             
             t = tup[0]
