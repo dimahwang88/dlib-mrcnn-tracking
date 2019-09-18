@@ -188,7 +188,7 @@ while True:
     # and then create a tracker for each object
     id_labels = random.sample(range(1, 1000), 100)
 
-    if frame_number == 1 or frame_number % 8 == 0:
+    if frame_number == 1 or frame_number % 6 == 0:
         detections = []
 
         det_start = time.time()
