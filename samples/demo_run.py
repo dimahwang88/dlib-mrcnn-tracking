@@ -306,7 +306,7 @@ while True:
                     pt1 = np.asarray([bx, by], dtype=np.float)
                     pt2 = np.asarray([dbx, dby], dtype=np.float)
                     print('eucl dist: ')
-                    print(_distance(pt1, pt2)
+                    print(_distance(pt1, pt2))
 
                 rect = dlib.rectangle(d[0], d[1], d[2], d[3])
                 t.start_track(rgb, rect)
