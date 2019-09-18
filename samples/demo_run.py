@@ -284,6 +284,7 @@ while True:
                 if label == str(13):
                     #print('cost for label 13 ')
                     print(cost_mtx.shape)
+                    print(len(indices))
                     print(cost_mtx[row])
                     print('detection pos')
                     print([d[0], d[1], d[2], d[3]])
