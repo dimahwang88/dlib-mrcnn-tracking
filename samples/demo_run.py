@@ -188,7 +188,6 @@ while True:
     # and then create a tracker for each object
     id_labels = random.sample(range(1, 1000), 100)
 
-    #if len(trackers) == 0:  
     if frame_number == 1 or frame_number % 8 == 0:
         detections = []
 
@@ -284,6 +283,7 @@ while True:
 
                 if label == str(13):
                     #print('cost for label 13 ')
+                    print(cost_mtx.shape)
                     print(cost_mtx[row])
                     print('detection pos')
                     print([d[0], d[1], d[2], d[3]])
