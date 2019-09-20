@@ -194,40 +194,50 @@ while True:
     id_labels = random.sample(range(1, 1000), 100)
 
     if frame_number == 1 or frame_number % 6 == 0:
-#    if frame_number == 1:
         detections = []
 
-        det_start = time.time()
-        print('[DEBUG] --> started detection')
-        results = model.detect([frame], verbose=0)
-        det_finish = time.time()
-        r = results[0]
-        print('[DEBUG] --> detection took: ' + str(det_finish-det_start) + ' .s')
+        # reading detections from txt file
+        with open(args["det_txt_file"], "r") as f:
+            for line in f:
+                currentline = line.split(",")
+                frame_num = int(currentline[0])
 
-        class_id = r['class_ids']
-        det_score = r['scores']
+                x1 = int(float(currentline[1]))
+                y1 = int(float(currentline[2]))
+                x2 = int(float(currentline[3])) 
+                y2 = int(float(currentline[4]))
 
-        N = r['rois'].shape[0]
+                if frame_num == frame_number:
+                    cv2.rectangle(frame, (x1, y1), (x2, y2), (255,0,0), 2)
+                    detections.append([x1,y1,x2,y2])
 
-        for i in range(N):
+#        det_start = time.time()
+#        print('[DEBUG] --> started detection')
+#        results = model.detect([frame], verbose=0)
+#        det_finish = time.time()
+#        r = results[0]
+#        print('[DEBUG] --> detection took: ' + str(det_finish-det_start) + ' .s')
+
+ #       class_id = r['class_ids']
+ #       det_score = r['scores']
+
+ #       N = r['rois'].shape[0]
+
+#        for i in range(N):
             # if not person class
-            if class_id[i] != 1:
-                continue
-            y1, x1, y2, x2 = r['rois'][i]
-            # height threshold
-            if (y2-y1) <= 35:
-                continue
-            cv2.rectangle(frame, (x1, y1), (x2, y2), (255,0,0), 2)
-            detections.append([x1,y1,x2,y2])
+#            if class_id[i] != 1:
+#                continue
+#            y1, x1, y2, x2 = r['rois'][i]
+#            # height threshold
+#            if (y2-y1) <= 35:
+#                continue
+
+#            detections.append([x1,y1,x2,y2])
         
         #cv2.imwrite('test_mrcnn.jpg',cv2.cvtColor(frame, cv2.COLOR_RGB2BGR)) 
         #print('[DEBUG] --> dumped detections')
 
         if frame_number == 1:
-            # create number of trackers == number of detections
-            # assign new labels to each tracker
-            # start each track
-
             for i in range(len(detections)):    
                 box = detections[i]
                 label = str(i)
@@ -236,17 +246,9 @@ while True:
                 startY = box[1]
                 endX = box[2]
                 endY = box[3]
-
-
-                
-                #t = dlib.correlation_tracker()
-                #rect = dlib.rectangle(startX, startY, endX, endY)
-                #t.start_track(rgb, rect)
                 tracker = cv2.TrackerCSRT_create()
                 tracker_lst.append((tracker, label))
                 multi_tracker.add(tracker, frame, (box[0], box[1], box[2]-box[0], box[3]-box[1]))
-
-                #trackers.append((t,label))
 
                 cv2.rectangle(frame, (startX, startY), (endX, endY), (0, 0, 255), 2)
                 cv2.putText(frame, label, (startX, startY - 8), cv2.FONT_HERSHEY_SIMPLEX, 1.5, (255, 0, 0), 3)
@@ -276,8 +278,6 @@ while True:
             for i in range(len(trackers)):
                 cost_mtx[i] = euclidean_dist(trackers[i], detections)
             
-            #print(len(trackers), len(detections), cost_mtx.shape)
-
             for i in range(len(trackers)):
                 cost_row = cost_mtx[i]
                 if np.all(cost_row == DIST_INFINITE, axis=0):
@@ -327,56 +327,30 @@ while True:
     else:
         cf_track_start = time.time()
 
-        (success, boxes) = multi_tracker.update(frame)
+        for track_obj in tracker_lst:
+            track, l = track_obj
+            _, bbox = track.update(frame)
+
+            (x, y, w, h) = bbox
+
+            x = int(x)
+            y = int(y)
+            w = int(w)
+            h = int(h)
+
+            cv2.rectangle(frame, (x, y), (x + w, y + h), (255, 0, 0), 2)
+            cv2.putText(frame, l, (x, y - 8), cv2.FONT_HERSHEY_SIMPLEX, 1.5, (0, 0, 255), 3)
+
+#        (success, boxes) = multi_tracker.update(frame)
 
         # loop over the bounding boxes and draw then on the frame
-        for box in boxes:
-            (x, y, w, h) = [int(v) for v in box]
-            cv2.rectangle(frame, (x, y), (x + w, y + h), (0, 255, 0), 2)
+ #       for box in boxes:
+ #           (x, y, w, h) = [int(v) for v in box]
+ #           cv2.rectangle(frame, (x, y), (x + w, y + h), (0, 255, 0), 2)
 
         cf_track_end = time.time()
         print('CF tracker processing time: ' + str(cf_track_end-cf_track_start) + ' s.')
 
-        #for track_obj in tracker_lst:
-        #    track, l = track_obj
-        #    _, bbox = track.update(frame)
-            
-        #    (x, y, w, h) = bbox
-            
-        #    x = int(x)
-        #    y = int(y)
-        #    w = int(w)
-        #    h = int(h)
-#
-        #    cv2.rectangle(frame, (x, y), (x + w, y + h), (255, 0, 0), 2)
-        #    cv2.putText(frame, l, (x, y - 8), cv2.FONT_HERSHEY_SIMPLEX, 1.5, (0, 0, 255), 3)
-
-        # loop over each of the trackers
-        #for i in range(len(trackers)):
-        #    if i not in active_tracks_index:
-        #        continue
-        #    
-        #    tup = trackers[i]
-        #    
-        #    t = tup[0]
-        #    l = tup[1]
-        #    # update the tracker and grab the position of the tracked
-        #    # object
-        #    t.update(rgb)
-        #    pos = t.get_position()
-
-        #    # unpack the position object
-        #    startX = int(pos.left())
-        #    startY = int(pos.top())
-        #    endX = int(pos.right())
-        #    endY = int(pos.bottom())
-
-        #    # draw the bounding box from the correlation object tracker
-        #    cv2.rectangle(frame, (startX, startY), (endX, endY), (0, 0, 0), 2)
-        #    cv2.putText(frame, l, (startX, startY - 8), cv2.FONT_HERSHEY_SIMPLEX, 1.5, (255, 0, 0), 3)
-
-    # check to see if we should write the frame to disk
-    #frame = imutils.resize(frame, width=1920, height=480)
     frame = cv2.resize(frame, (1820,380))
     cv2.putText(frame, 'frame :'+str(frame_number), (80, 80), cv2.FONT_HERSHEY_SIMPLEX, 1, (255,0,0), 2, cv2.LINE_AA)
 
