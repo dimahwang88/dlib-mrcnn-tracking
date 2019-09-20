@@ -273,61 +273,59 @@ while True:
                 print(box)
                 cv2.rectangle(frame, (sx, sy), (ex, ey), (0, 255, 0), 2)
 
-            cost_mtx = np.zeros((len(trackers), len(detections)))
-            del_rows = []
-            active_tracks_index.clear()
+#            cost_mtx = np.zeros((len(trackers), len(detections)))
+#            del_rows = []
+#            active_tracks_index.clear()
 
-            continue
-
-            for i in range(len(trackers)):
-                cost_mtx[i] = euclidean_dist(trackers[i], detections)
+#            for i in range(len(trackers)):
+#                cost_mtx[i] = euclidean_dist(trackers[i], detections)
             
-            for i in range(len(trackers)):
-                cost_row = cost_mtx[i]
-                if np.all(cost_row == DIST_INFINITE, axis=0):
-                    del_rows.append(i)
-                else:
-                    active_tracks_index.append(i)
+#            for i in range(len(trackers)):
+#                cost_row = cost_mtx[i]
+#                if np.all(cost_row == DIST_INFINITE, axis=0):
+#                    del_rows.append(i)
+#                else:
+#                    active_tracks_index.append(i)
             
-            cost_mtx = np.delete(cost_mtx, del_rows, axis=0)
+#            cost_mtx = np.delete(cost_mtx, del_rows, axis=0)
 
             # indices contains row -> col assignments
-            indices = linear_assignment(cost_mtx)
+ #           indices = linear_assignment(cost_mtx)
             
-            for row, col in indices:
-                t, label = trackers[active_tracks_index[row]]
-                d = detections[col]
+#            for row, col in indices:
+#                t, label = trackers[active_tracks_index[row]]
+#                d = detections[col]
 
 #############################################################################################################################################################
 # Work-around
-                t_pos = t.get_position()
-
-                sX = int(t_pos.left())
-                sY = int(t_pos.top())
-                eX = int(t_pos.right())
-                eY = int(t_pos.bottom())
-
-                bx = sX / 2
-                by = eY
-
-                dbx = d[0] / 2
-                dby = d[3]
-
-                pt1 = np.asarray([bx, by], dtype=np.float)
-                pt2 = np.asarray([dbx, dby], dtype=np.float)
-
-                if _distance(pt1, pt2) > EUCL_THRESH:
-                    continue
+##                t_pos = t.get_position()
+#
+#                sX = int(t_pos.left())
+#                sY = int(t_pos.top())
+#                eX = int(t_pos.right())
+#                eY = int(t_pos.bottom())
+#
+#                bx = sX / 2
+#                by = eY
+#
+#                dbx = d[0] / 2
+#                dby = d[3]
+#
+#                pt1 = np.asarray([bx, by], dtype=np.float)
+#                pt2 = np.asarray([dbx, dby], dtype=np.float)
+#
+#                if _distance(pt1, pt2) > EUCL_THRESH:
+#                    continue
 #############################################################################################################################################################
 
-                rect = dlib.rectangle(d[0], d[1], d[2], d[3])
-                t.start_track(rgb, rect)
+#                rect = dlib.rectangle(d[0], d[1], d[2], d[3])
+#                t.start_track(rgb, rect)
 
-                cv2.rectangle(frame, (d[0], d[1]), (d[2], d[3]), (0, 0, 255), 2)
-                cv2.putText(frame, label, (d[0], d[1] - 8), cv2.FONT_HERSHEY_SIMPLEX, 1.5, (255, 0, 0), 3)
+#                cv2.rectangle(frame, (d[0], d[1]), (d[2], d[3]), (0, 0, 255), 2)
+#                cv2.putText(frame, label, (d[0], d[1] - 8), cv2.FONT_HERSHEY_SIMPLEX, 1.5, (255, 0, 0), 3)
 
 	# otherwise, we've already performed detection so let's track
-	# multiple objects
+#	# multiple objects
     else:
         cf_track_start = time.time()
 
