@@ -193,8 +193,8 @@ while True:
     # and then create a tracker for each object
     id_labels = random.sample(range(1, 1000), 100)
 
-#    if frame_number == 1 or frame_number % 6 == 0:
-    if frame_number == 1:
+    if frame_number == 1 or frame_number % 6 == 0:
+#    if frame_number == 1:
         detections = []
 
         det_start = time.time()
@@ -270,6 +270,8 @@ while True:
             cost_mtx = np.zeros((len(trackers), len(detections)))
             del_rows = []
             active_tracks_index.clear()
+
+            continue
 
             for i in range(len(trackers)):
                 cost_mtx[i] = euclidean_dist(trackers[i], detections)
