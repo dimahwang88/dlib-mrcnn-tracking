@@ -25,7 +25,8 @@ import random
 
 # Hungarian assignment
 #from sklearn.utils.linear_assignment_ import linear_assignment
-from scipy.optimize.linear_sum_assignment import linear_sum_assignment
+#from scipy.optimize.linear_sum_assignment import linear_sum_assignment
+from scipy.optimize import linear_sum_assignment
 
 ROOT_DIR = os.path.abspath("../")
 # Import Mask RCNN
