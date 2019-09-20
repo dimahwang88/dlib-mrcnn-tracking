@@ -243,7 +243,6 @@ while True:
         if frame_number == 1:
             for i in range(len(detections)):    
                 box = detections[i]
-                print(box)
                 label = str(i)
 
                 startX = box[0]
@@ -271,6 +270,7 @@ while True:
                 sy = box[1]
                 ex = box[2]
                 ey = box[3]
+                print(box)
                 cv2.rectangle(frame, (sx, sy), (ex, ey), (0, 255, 0), 2)
 
             cost_mtx = np.zeros((len(trackers), len(detections)))
