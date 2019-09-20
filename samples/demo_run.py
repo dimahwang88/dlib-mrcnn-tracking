@@ -162,6 +162,7 @@ def euclidean_dist(track, detections):
 
 multi_tracker = cv2.MultiTracker_create()
 tracker_lst = []
+
 while True:
     frame_number = frame_number + 1
     # grab the next frame from the video file
@@ -324,6 +325,9 @@ while True:
 
         (success, boxes) = multi_tracker.update(frame)
 
+        cf_track_end = time.time()
+        print('CF tracker processing time: ' + str(cf_track_end-cf_track_start) + ' s.')
+
         # loop over the bounding boxes and draw then on the frame
         for box in boxes:
             (x, y, w, h) = [int(v) for v in box]
@@ -366,9 +370,6 @@ while True:
         #    # draw the bounding box from the correlation object tracker
         #    cv2.rectangle(frame, (startX, startY), (endX, endY), (0, 0, 0), 2)
         #    cv2.putText(frame, l, (startX, startY - 8), cv2.FONT_HERSHEY_SIMPLEX, 1.5, (255, 0, 0), 3)
-
-        cf_track_end = time.time()
-        print('CF tracker processing time: ' + str(cf_track_end-cf_track_start) + ' s.')
 
     # check to see if we should write the frame to disk
     #frame = imutils.resize(frame, width=1920, height=480)
