@@ -160,6 +160,8 @@ def euclidean_dist(track, detections):
         _dist_cur_track[i] = _distance(pt1, pt2)
     return _dist_cur_track
 
+multi_tracker = cv2.MultiTracker_create()
+tracker_lst = []
 while True:
     frame_number = frame_number + 1
     # grab the next frame from the video file
@@ -188,7 +190,8 @@ while True:
     # and then create a tracker for each object
     id_labels = random.sample(range(1, 1000), 100)
 
-    if frame_number == 1 or frame_number % 6 == 0:
+#    if frame_number == 1 or frame_number % 6 == 0:
+    if frame_number == 1:
         detections = []
 
         det_start = time.time()
@@ -224,18 +227,23 @@ while True:
 
             for i in range(len(detections)):    
                 box = detections[i]
+                label = str(i)
 
                 startX = box[0]
                 startY = box[1]
                 endX = box[2]
                 endY = box[3]
-                
-                t = dlib.correlation_tracker()
-                rect = dlib.rectangle(startX, startY, endX, endY)
-                t.start_track(rgb, rect)
 
-                label = str(i)
-                trackers.append((t,label))
+
+                
+                #t = dlib.correlation_tracker()
+                #rect = dlib.rectangle(startX, startY, endX, endY)
+                #t.start_track(rgb, rect)
+                tracker = cv2.TrackerCSRT_create()
+                tracker_lst.append((tracker, label))
+                multi_tracker.add(tracker, frame, (box[0], box[1], box[2]-box[0], box[3]-box[1]))
+
+                #trackers.append((t,label))
 
                 cv2.rectangle(frame, (startX, startY), (endX, endY), (0, 0, 255), 2)
                 cv2.putText(frame, label, (startX, startY - 8), cv2.FONT_HERSHEY_SIMPLEX, 1.5, (255, 0, 0), 3)
@@ -313,32 +321,47 @@ while True:
 	# multiple objects
     else:
         cf_track_start = time.time()
+
+        for track_obj in tracker_lst:
+            track, l = track_obj
+            _, bbox = track.update(frame)
+            
+            (x, y, w, h) = bbox
+            
+            x = int(x)
+            y = int(y)
+            w = int(w)
+            h = int(h)
+
+            cv2.rectangle(frame, (x, y), (x + w, y + h), (255, 0, 0), 2)
+            cv2.putText(frame, l, (x, y - 8), cv2.FONT_HERSHEY_SIMPLEX, 1.5, (0, 0, 255), 3)
+
         # loop over each of the trackers
-        for i in range(len(trackers)):
-            if i not in active_tracks_index:
-                continue
-            
-            tup = trackers[i]
-            
-            t = tup[0]
-            l = tup[1]
-            # update the tracker and grab the position of the tracked
-            # object
-            t.update(rgb)
-            pos = t.get_position()
+        #for i in range(len(trackers)):
+        #    if i not in active_tracks_index:
+        #        continue
+        #    
+        #    tup = trackers[i]
+        #    
+        #    t = tup[0]
+        #    l = tup[1]
+        #    # update the tracker and grab the position of the tracked
+        #    # object
+        #    t.update(rgb)
+        #    pos = t.get_position()
 
-            # unpack the position object
-            startX = int(pos.left())
-            startY = int(pos.top())
-            endX = int(pos.right())
-            endY = int(pos.bottom())
+        #    # unpack the position object
+        #    startX = int(pos.left())
+        #    startY = int(pos.top())
+        #    endX = int(pos.right())
+        #    endY = int(pos.bottom())
 
-            # draw the bounding box from the correlation object tracker
-            cv2.rectangle(frame, (startX, startY), (endX, endY), (0, 0, 0), 2)
-            cv2.putText(frame, l, (startX, startY - 8), cv2.FONT_HERSHEY_SIMPLEX, 1.5, (255, 0, 0), 3)
+        #    # draw the bounding box from the correlation object tracker
+        #    cv2.rectangle(frame, (startX, startY), (endX, endY), (0, 0, 0), 2)
+        #    cv2.putText(frame, l, (startX, startY - 8), cv2.FONT_HERSHEY_SIMPLEX, 1.5, (255, 0, 0), 3)
+
         cf_track_end = time.time()
-
-        #print('CF tracker processing time: ' + str(cf_track_end-cf_track_start) + ' s.')
+        print('CF tracker processing time: ' + str(cf_track_end-cf_track_start) + ' s.')
 
     # check to see if we should write the frame to disk
     #frame = imutils.resize(frame, width=1920, height=480)
