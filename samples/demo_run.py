@@ -251,7 +251,7 @@ while True:
                 endY = box[3]
                 tracker = cv2.TrackerCSRT_create()
                 #multi_tracker.add(tracker, frame, (box[0], box[1], box[2]-box[0], box[3]-box[1]))
-                _ =	cv.tracker.init(frame, (box[0], box[1], box[2]-box[0], box[3]-box[1]))
+                tracker.init(frame, (box[0], box[1], box[2]-box[0], box[3]-box[1]))
 
                 tracker_lst.append((tracker, label))
                 #multi_tracker.add(tracker, frame, (box[0], box[1], box[2]-box[0], box[3]-box[1]))
