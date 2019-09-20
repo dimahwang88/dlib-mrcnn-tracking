@@ -19,7 +19,7 @@ from imutils.video import FPS
 import numpy as np
 import argparse
 import imutils
-import dlib
+#import dlib
 import cv2
 import random
 
@@ -325,13 +325,13 @@ while True:
 
         (success, boxes) = multi_tracker.update(frame)
 
-        cf_track_end = time.time()
-        print('CF tracker processing time: ' + str(cf_track_end-cf_track_start) + ' s.')
-
         # loop over the bounding boxes and draw then on the frame
         for box in boxes:
             (x, y, w, h) = [int(v) for v in box]
             cv2.rectangle(frame, (x, y), (x + w, y + h), (0, 255, 0), 2)
+
+        cf_track_end = time.time()
+        print('CF tracker processing time: ' + str(cf_track_end-cf_track_start) + ' s.')
 
         #for track_obj in tracker_lst:
         #    track, l = track_obj
