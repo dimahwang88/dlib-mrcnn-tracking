@@ -273,7 +273,6 @@ while True:
                 sy = box[1]
                 ex = box[2]
                 ey = box[3]
-                print(box)
                 cv2.rectangle(frame, (sx, sy), (ex, ey), (0, 255, 0), 2)
 
 #            cost_mtx = np.zeros((len(trackers), len(detections)))
