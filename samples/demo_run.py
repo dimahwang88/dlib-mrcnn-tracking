@@ -184,10 +184,7 @@ while True:
     size = (int(vs.get(cv2.CAP_PROP_FRAME_WIDTH)), int(vs.get(cv2.CAP_PROP_FRAME_HEIGHT)))
     # if we are supposed to be writing a video to disk, initialize
     # the writer
-    #if args["output"] is not None and writer is None:
-    #    fourcc = cv2.VideoWriter_fourcc(*"MJPG")
-    #    writer = cv2.VideoWriter(args["output"], fourcc, 30,
-    #        (frame.shape[1], frame.shape[0]), True)
+
     if args["output"] is not None and writer is None:
         fourcc = cv2.VideoWriter_fourcc(*"MJPG")
         writer = cv2.VideoWriter(args["output"], fourcc, 30,
@@ -213,32 +210,6 @@ while True:
                 if frame_num == frame_number:
                     cv2.rectangle(frame, (x1, y1), (x2, y2), (255,0,0), 2)
                     detections.append([x1,y1,x2,y2])
-
-#        det_start = time.time()
-#        print('[DEBUG] --> started detection')
-#        results = model.detect([frame], verbose=0)
-#        det_finish = time.time()
-#        r = results[0]
-#        print('[DEBUG] --> detection took: ' + str(det_finish-det_start) + ' .s')
-
- #       class_id = r['class_ids']
- #       det_score = r['scores']
-
- #       N = r['rois'].shape[0]
-
-#        for i in range(N):
-            # if not person class
-#            if class_id[i] != 1:
-#                continue
-#            y1, x1, y2, x2 = r['rois'][i]
-#            # height threshold
-#            if (y2-y1) <= 35:
-#                continue
-
-#            detections.append([x1,y1,x2,y2])
-        
-        #cv2.imwrite('test_mrcnn.jpg',cv2.cvtColor(frame, cv2.COLOR_RGB2BGR)) 
-        #print('[DEBUG] --> dumped detections')
 
         if frame_number == 1:
             for i in range(len(detections)):    
@@ -344,13 +315,6 @@ while True:
 
             cv2.rectangle(frame, (x, y), (x + w, y + h), (255, 0, 0), 2)
             cv2.putText(frame, l, (x, y - 8), cv2.FONT_HERSHEY_SIMPLEX, 1.5, (0, 0, 255), 3)
-
-#        (success, boxes) = multi_tracker.update(frame)
-
-        # loop over the bounding boxes and draw then on the frame
- #       for box in boxes:
- #           (x, y, w, h) = [int(v) for v in box]
- #           cv2.rectangle(frame, (x, y), (x + w, y + h), (0, 255, 0), 2)
 
         cf_track_end = time.time()
         print('CF tracker processing time: ' + str(cf_track_end-cf_track_start) + ' s.')
