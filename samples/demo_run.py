@@ -243,6 +243,7 @@ while True:
         if frame_number == 1:
             for i in range(len(detections)):    
                 box = detections[i]
+                print(box)
                 label = str(i)
 
                 startX = box[0]
@@ -251,7 +252,7 @@ while True:
                 endY = box[3]
                 tracker = cv2.TrackerCSRT_create()
                 tracker_lst.append((tracker, label))
-                multi_tracker.add(tracker, frame, (box[0], box[1], box[2]-box[0], box[3]-box[1]))
+                #multi_tracker.add(tracker, frame, (box[0], box[1], box[2]-box[0], box[3]-box[1]))
 
                 cv2.rectangle(frame, (startX, startY), (endX, endY), (0, 0, 255), 2)
                 cv2.putText(frame, label, (startX, startY - 8), cv2.FONT_HERSHEY_SIMPLEX, 1.5, (255, 0, 0), 3)
