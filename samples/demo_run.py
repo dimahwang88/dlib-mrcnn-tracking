@@ -322,19 +322,26 @@ while True:
     else:
         cf_track_start = time.time()
 
-        for track_obj in tracker_lst:
-            track, l = track_obj
-            _, bbox = track.update(frame)
-            
-            (x, y, w, h) = bbox
-            
-            x = int(x)
-            y = int(y)
-            w = int(w)
-            h = int(h)
+        (success, boxes) = multi_tracker.update(frame)
 
-            cv2.rectangle(frame, (x, y), (x + w, y + h), (255, 0, 0), 2)
-            cv2.putText(frame, l, (x, y - 8), cv2.FONT_HERSHEY_SIMPLEX, 1.5, (0, 0, 255), 3)
+        # loop over the bounding boxes and draw then on the frame
+        for box in boxes:
+            (x, y, w, h) = [int(v) for v in box]
+            cv2.rectangle(frame, (x, y), (x + w, y + h), (0, 255, 0), 2)
+
+        #for track_obj in tracker_lst:
+        #    track, l = track_obj
+        #    _, bbox = track.update(frame)
+            
+        #    (x, y, w, h) = bbox
+            
+        #    x = int(x)
+        #    y = int(y)
+        #    w = int(w)
+        #    h = int(h)
+#
+        #    cv2.rectangle(frame, (x, y), (x + w, y + h), (255, 0, 0), 2)
+        #    cv2.putText(frame, l, (x, y - 8), cv2.FONT_HERSHEY_SIMPLEX, 1.5, (0, 0, 255), 3)
 
         # loop over each of the trackers
         #for i in range(len(trackers)):
