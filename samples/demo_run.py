@@ -92,6 +92,9 @@ ap.add_argument("-d", "--det_file", type=str,
 	help="path to detection txt file")
 ap.add_argument("-mask", "--mask_path", type=str,
 	help="path to mask txt file")
+ap.add_argument("-dd", "--det_txt_file", type=str,
+	help="path to detection txt file")
+
 args = vars(ap.parse_args())
 
 mask = cv2.imread(args["mask_path"])
