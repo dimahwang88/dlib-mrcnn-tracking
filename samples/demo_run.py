@@ -284,7 +284,7 @@ while True:
             cost_mtx = np.delete(cost_mtx, del_rows, axis=0)
 
             # indices contains row -> col assignments
-            indices = linear_assignment(cost_mtx)
+            #indices = linear_assignment(cost_mtx)
             
             for row, col in indices:
                 t, label = trackers[active_tracks_index[row]]
