@@ -143,16 +143,12 @@ def _distance(pt1, pt2):
 def euclidean_dist(track, detections):
     t, l = track
     _dist_cur_track = np.zeros(len(detections))
-    tr_pos = t.get_position()
-
-    # unpack the position object
-    sX = int(tr_pos.left())
-    sY = int(tr_pos.top())
-    eX = int(tr_pos.right())
-    eY = int(tr_pos.bottom())
-
-    bx = sX / 2
-    by = eY
+    
+    _, bbox = track.update(frame)
+    (x, y, w, h) = bbox
+    
+    bx = x + w / 2
+    by = y + h
 
     for i in range(len(detections)):
         det_pos = detections[i]
@@ -220,9 +216,10 @@ while True:
                 startY = box[1]
                 endX = box[2]
                 endY = box[3]
-                tracker = cv2.TrackerCSRT_create()
 
+                tracker = cv2.TrackerCSRT_create()
                 tracker.init(frame, (box[0], box[1], box[2]-box[0], box[3]-box[1]))
+
                 tracker_lst.append((tracker, label))
 
                 cv2.rectangle(frame, (startX, startY), (endX, endY), (0, 0, 255), 2)
@@ -244,28 +241,28 @@ while True:
                 ey = box[3]
                 cv2.rectangle(frame, (sx, sy), (ex, ey), (0, 255, 0), 2)
 
-#            cost_mtx = np.zeros((len(trackers), len(detections)))
-#            del_rows = []
-#            active_tracks_index.clear()
+            cost_mtx = np.zeros((len(tracker_lst), len(detections)))
+            del_rows = []
+            active_tracks_index.clear()
 
-#            for i in range(len(trackers)):
-#                cost_mtx[i] = euclidean_dist(trackers[i], detections)
+            for i in range(len(tracker_lst)):
+                cost_mtx[i] = euclidean_dist(tracker_lst[i], detections)
             
-#            for i in range(len(trackers)):
-#                cost_row = cost_mtx[i]
-#                if np.all(cost_row == DIST_INFINITE, axis=0):
-#                    del_rows.append(i)
-#                else:
-#                    active_tracks_index.append(i)
+            for i in range(len(tracker_lst)):
+                cost_row = cost_mtx[i]
+                if np.all(cost_row == DIST_INFINITE, axis=0):
+                    del_rows.append(i)
+                else:
+                    active_tracks_index.append(i)
             
-#            cost_mtx = np.delete(cost_mtx, del_rows, axis=0)
+            cost_mtx = np.delete(cost_mtx, del_rows, axis=0)
 
             # indices contains row -> col assignments
- #           indices = linear_assignment(cost_mtx)
+            indices = linear_sum_assignment(cost_mtx)
             
-#            for row, col in indices:
-#                t, label = trackers[active_tracks_index[row]]
-#                d = detections[col]
+            for row, col in indices:
+                t, label = tracker_lst[active_tracks_index[row]]
+                d = detections[col]
 
 #############################################################################################################################################################
 # Work-around
@@ -289,11 +286,10 @@ while True:
 #                    continue
 #############################################################################################################################################################
 
-#                rect = dlib.rectangle(d[0], d[1], d[2], d[3])
-#                t.start_track(rgb, rect)
+                tracker.init(frame, (d[0], d[1], d[2]-d[0], d[3]-d[1]))
 
-#                cv2.rectangle(frame, (d[0], d[1]), (d[2], d[3]), (0, 0, 255), 2)
-#                cv2.putText(frame, label, (d[0], d[1] - 8), cv2.FONT_HERSHEY_SIMPLEX, 1.5, (255, 0, 0), 3)
+                cv2.rectangle(frame, (d[0], d[1]), (d[2], d[3]), (0, 0, 255), 2)
+                cv2.putText(frame, label, (d[0], d[1] - 8), cv2.FONT_HERSHEY_SIMPLEX, 1.5, (255, 0, 0), 3)
 
 	# otherwise, we've already performed detection so let's track
 #	# multiple objects
