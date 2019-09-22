@@ -144,7 +144,7 @@ def euclidean_dist(track, detections):
     t, l = track
     _dist_cur_track = np.zeros(len(detections))
     
-    _, bbox = track.update(frame)
+    _, bbox = t.update(frame)
     (x, y, w, h) = bbox
     
     bx = x + w / 2
