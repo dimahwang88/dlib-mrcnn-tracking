@@ -289,8 +289,10 @@ while True:
 #                if _distance(pt1, pt2) > EUCL_THRESH:
 #                    continue
 #############################################################################################################################################################
-                t.init(frame, (d[0], d[1], d[2]-d[0], d[3]-d[1]))
-
+                new_track = cv2.TrackerCSRT_create()
+                new_track.init(frame, (d[0], d[1], d[2]-d[0], d[3]-d[1]))
+                tracker_lst[active_tracks_index[row]] = (new_track, label)
+                
                 cv2.rectangle(frame, (d[0], d[1]), (d[2], d[3]), (0, 0, 255), 2)
                 cv2.putText(frame, label, (d[0], d[1] - 8), cv2.FONT_HERSHEY_SIMPLEX, 1.5, (255, 0, 0), 3)
 
