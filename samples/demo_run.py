@@ -147,8 +147,6 @@ def euclidean_dist(track, detections):
     _, bbox = t.update(frame)
     (x, y, w, h) = bbox
 
-    print(bbox)
-    
     bx = x + w / 2
     by = y + h
 
@@ -161,6 +159,8 @@ def euclidean_dist(track, detections):
         pt1 = np.asarray([bx, by], dtype=np.float)
         pt2 = np.asarray([dbx, dby], dtype=np.float)
         _dist_cur_track[i] = _distance(pt1, pt2)
+    
+    print(_dist_cur_track)
     return _dist_cur_track
 
 multi_tracker = cv2.MultiTracker_create()
