@@ -243,6 +243,7 @@ while True:
                 sy = box[1]
                 ex = box[2]
                 ey = box[3]
+                cv2.rectangle(frame, (sx, sy), (ex, ey), (0, 255, 0), 2)
 
             cost_mtx = np.zeros((len(tracker_lst), len(detections)))
             del_rows = []
@@ -289,7 +290,7 @@ while True:
 #                    continue
 #############################################################################################################################################################
 
-                t.init(frame, (d[0], d[1], d[2]-d[0], d[3]-d[1]))
+                #t.init(frame, (d[0], d[1], d[2]-d[0], d[3]-d[1]))
 
                 cv2.rectangle(frame, (d[0], d[1]), (d[2], d[3]), (0, 0, 255), 2)
                 cv2.putText(frame, label, (d[0], d[1] - 8), cv2.FONT_HERSHEY_SIMPLEX, 1.5, (255, 0, 0), 3)
