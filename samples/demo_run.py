@@ -162,7 +162,7 @@ def euclidean_dist(track, detections):
         pt2 = np.asarray([dbx, dby], dtype=np.float)
         _dist_cur_track[i] = _distance(pt1, pt2)
     
-    print(_dist_cur_track)
+    #print(_dist_cur_track)
     return _dist_cur_track
 
 multi_tracker = cv2.MultiTracker_create()
@@ -262,9 +262,6 @@ while True:
 
             # indices contains row -> col assignments
             row_ind, col_ind = linear_sum_assignment(cost_mtx)
-
-            #print(row_ind)                                    
-            #print(col_ind)                                    
 
             for row, col in zip(row_ind, col_ind):
                 t, label = tracker_lst[active_tracks_index[row]]
