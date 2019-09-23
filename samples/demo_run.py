@@ -136,8 +136,6 @@ def all_same(items):
 def _distance(pt1, pt2):
     dist = 0
     dist = np.linalg.norm(pt1-pt2)
-    if dist > EUCL_THRESH:
-        dist = DIST_INFINITE
     return dist
 
 def euclidean_dist(track, detections):
@@ -252,15 +250,6 @@ while True:
             for i in range(len(tracker_lst)):
                 cost_mtx[i] = euclidean_dist(tracker_lst[i], detections)
             
-            for i in range(len(tracker_lst)):
-                cost_row = cost_mtx[i]
-                if np.all(cost_row == DIST_INFINITE, axis=0):
-                    del_rows.append(i)
-                else:
-                    active_tracks_index.append(i)
-            
-            cost_mtx = np.delete(cost_mtx, del_rows, axis=0)
-
             # indices contains row -> col assignments
             row_ind, col_ind = linear_sum_assignment(cost_mtx)
 
@@ -268,6 +257,8 @@ while True:
                 t, label = tracker_lst[active_tracks_index[row]]
                 d = detections[col]
 
+                if cost_mtx[row,col] > EUCL_THRESH:
+                    continue
 #############################################################################################################################################################
 # Work-around
 #                t_pos = t.get_position()
@@ -289,6 +280,7 @@ while True:
 #                if _distance(pt1, pt2) > EUCL_THRESH:
 #                    continue
 #############################################################################################################################################################
+
                 new_track = cv2.TrackerCSRT_create()
                 new_track.init(frame, (d[0], d[1], d[2]-d[0], d[3]-d[1]))
                 tracker_lst[active_tracks_index[row]] = (new_track, label)
