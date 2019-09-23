@@ -146,6 +146,8 @@ def euclidean_dist(track, detections):
     
     _, bbox = t.update(frame)
     (x, y, w, h) = bbox
+
+    print(bbox)
     
     bx = x + w / 2
     by = y + h
@@ -246,7 +248,6 @@ while True:
 
             for i in range(len(tracker_lst)):
                 cost_mtx[i] = euclidean_dist(tracker_lst[i], detections)
-                print(cost_mtx[i])
             
             for i in range(len(tracker_lst)):
                 cost_row = cost_mtx[i]
