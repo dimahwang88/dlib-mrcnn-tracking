@@ -239,7 +239,6 @@ while True:
                 sy = box[1]
                 ex = box[2]
                 ey = box[3]
-                cv2.rectangle(frame, (sx, sy), (ex, ey), (0, 255, 0), 2)
 
             cost_mtx = np.zeros((len(tracker_lst), len(detections)))
             del_rows = []
@@ -259,6 +258,9 @@ while True:
 
             # indices contains row -> col assignments
             row_ind, col_ind = linear_sum_assignment(cost_mtx)
+
+            print(row_ind)                                    
+            print(col_ind)                                    
             
             for row, col in zip(row_ind, col_ind):
                 t, label = tracker_lst[active_tracks_index[row]]
