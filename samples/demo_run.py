@@ -254,7 +254,7 @@ while True:
             row_ind, col_ind = linear_sum_assignment(cost_mtx)
 
             for row, col in zip(row_ind, col_ind):
-                t, label = tracker_lst[active_tracks_index[row]]
+                t, label = tracker_lst[row]
                 d = detections[col]
 
                 if cost_mtx[row,col] > EUCL_THRESH:
@@ -283,7 +283,7 @@ while True:
 
                 new_track = cv2.TrackerCSRT_create()
                 new_track.init(frame, (d[0], d[1], d[2]-d[0], d[3]-d[1]))
-                tracker_lst[active_tracks_index[row]] = (new_track, label)
+                tracker_lst[row] = (new_track, label)
                 
                 cv2.rectangle(frame, (d[0], d[1]), (d[2], d[3]), (0, 0, 255), 2)
                 cv2.putText(frame, label, (d[0], d[1] - 8), cv2.FONT_HERSHEY_SIMPLEX, 1.5, (255, 0, 0), 3)
