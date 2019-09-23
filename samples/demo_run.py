@@ -246,6 +246,7 @@ while True:
 
             for i in range(len(tracker_lst)):
                 cost_mtx[i] = euclidean_dist(tracker_lst[i], detections)
+                print(cost_mtx[i])
             
             for i in range(len(tracker_lst)):
                 cost_row = cost_mtx[i]
@@ -259,9 +260,9 @@ while True:
             # indices contains row -> col assignments
             row_ind, col_ind = linear_sum_assignment(cost_mtx)
 
-            print(row_ind)                                    
-            print(col_ind)                                    
-            
+            #print(row_ind)                                    
+            #print(col_ind)                                    
+
             for row, col in zip(row_ind, col_ind):
                 t, label = tracker_lst[active_tracks_index[row]]
                 d = detections[col]
