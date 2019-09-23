@@ -258,9 +258,9 @@ while True:
             cost_mtx = np.delete(cost_mtx, del_rows, axis=0)
 
             # indices contains row -> col assignments
-            indices = linear_sum_assignment(cost_mtx)
+            row_ind, col_ind = linear_sum_assignment(cost_mtx)
             
-            for row, col in indices:
+            for row, col in zip(row_ind, col_ind):
                 t, label = tracker_lst[active_tracks_index[row]]
                 d = detections[col]
 
