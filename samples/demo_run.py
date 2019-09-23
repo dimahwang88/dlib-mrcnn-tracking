@@ -153,7 +153,9 @@ def euclidean_dist(track, detections):
     for i in range(len(detections)):
         det_pos = detections[i]
     
-        dbx = det_pos[0] / 2
+        d_w = det_pos[2] - det_pos[0]
+
+        dbx = det_pos[0] + d_w / 2 
         dby = det_pos[3]
 
         pt1 = np.asarray([bx, by], dtype=np.float)
