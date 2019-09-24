@@ -266,7 +266,7 @@ while True:
                 cv2.rectangle(frame, (d[0], d[1]), (d[2], d[3]), (0, 0, 255), 2)
                 cv2.putText(frame, label, (d[0], d[1] - 8), cv2.FONT_HERSHEY_SIMPLEX, 1.5, (255, 0, 0), 3)
             
-            for i in len(detections):
+            for i in range(len(detections)):
                 if i in col_ind:
                     continue
 
