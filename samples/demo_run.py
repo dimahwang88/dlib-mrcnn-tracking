@@ -28,38 +28,35 @@ import random
 #from scipy.optimize.linear_sum_assignment import linear_sum_assignment
 from scipy.optimize import linear_sum_assignment
 
-ROOT_DIR = os.path.abspath("../")
+#ROOT_DIR = os.path.abspath("../")
 # Import Mask RCNN
-sys.path.append(ROOT_DIR)  # To find local version of the library
-from mrcnn import utils
-import mrcnn.model as modellib
-from mrcnn import visualize
+#sys.path.append(ROOT_DIR)  # To find local version of the library
+#from mrcnn import utils
+#import mrcnn.model as modellib
+#from mrcnn import visualize
 # Import COCO config
-sys.path.append(os.path.join(ROOT_DIR, "samples/coco/"))  # To find local version
-import coco
+#sys.path.append(os.path.join(ROOT_DIR, "samples/coco/"))  # To find local version
+#import coco
 
 # Directory to save logs and trained model
-MODEL_DIR = os.path.join(ROOT_DIR, "logs")
+#MODEL_DIR = os.path.join(ROOT_DIR, "logs")
 
 # Local path to trained weights file
-COCO_MODEL_PATH = os.path.join(ROOT_DIR, "mask_rcnn_coco.h5")
+#COCO_MODEL_PATH = os.path.join(ROOT_DIR, "mask_rcnn_coco.h5")
 
-class InferenceConfig(coco.CocoConfig):
+#class InferenceConfig(coco.CocoConfig):
     # Set batch size to 1 since we'll be running inference on
     # one image at a time. Batch size = GPU_COUNT * IMAGES_PER_GPU
-    GPU_COUNT = 1
-    IMAGES_PER_GPU = 1
+#    GPU_COUNT = 1
+#    IMAGES_PER_GPU = 1
 
-config = InferenceConfig()
-config.display()
+#config = InferenceConfig()
+#config.display()
 
 # Create model object in inference mode.
-model = modellib.MaskRCNN(mode="inference", model_dir=MODEL_DIR, config=config)
+#model = modellib.MaskRCNN(mode="inference", model_dir=MODEL_DIR, config=config)
 # Load weights trained on MS-COCO
-
-print('[DEBUG] --> loading detection weights')
-model.load_weights(COCO_MODEL_PATH, by_name=True)
-print('[DEBUG] --> done loading detection weights')
+#model.load_weights(COCO_MODEL_PATH, by_name=True)
 
 # COCO Class names
 # Index of the class in the list is its ID. For example, to get ID of
