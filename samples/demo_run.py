@@ -130,6 +130,37 @@ frame_number = 0
 EUCL_THRESH = 30
 DIST_INFINITE = 10000
 
+def _group(detections, euclid_thresh=10):
+    candidates = []
+    
+    for i in range(len(detections)):
+        det1 = detections[i]
+        
+        b1x = det1[0] + (det1[2]-det1[0]) / 2
+        b1y = det1[3]
+
+        pt1 = np.asarray([b1x, b1y], dtype=np.float)
+
+        if i in candidates:
+            continue
+
+        for j in range(len(detections)):
+            if i == j or j in candidates:
+                continue
+
+            det2 = detections[j]
+
+            b2x = det2[0] + (det2[2]-det2[0]) / 2
+            b2y = det2[3]
+
+            pt2 = np.asarray([b2x, b2y], dtype=np.float)
+
+            if _distance(pt1, pt2) < euclid_thresh:
+                candidates.append(i)
+                candidates.append(j)
+
+    return candidates
+
 def all_same(items):
     return all(x == items[0] for x in items)
 
@@ -207,6 +238,9 @@ while True:
                 if frame_num == frame_number:
                     cv2.rectangle(frame, (x1, y1), (x2, y2), (255,0,0), 2)
                     detections.append([x1,y1,x2,y2])
+
+        group_candidate = _group(detections)
+        detections = [detections[i] for i in range(len(detections)) if i not in group_candidate]
 
         if frame_number == 1:
             for i in range(len(detections)):    
