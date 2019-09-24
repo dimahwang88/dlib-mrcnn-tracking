@@ -130,35 +130,48 @@ frame_number = 0
 EUCL_THRESH = 30
 DIST_INFINITE = 10000
 
-def _group(detections, euclid_thresh=10):
+# import the necessary packages
+from collections import namedtuple
+import numpy as np
+import cv2
+
+# define the `Detection` object
+Detection = namedtuple("Detection", ["image_path", "gt", "pred"])
+
+def bb_intersection_over_union(boxA, boxB):
+	# determine the (x, y)-coordinates of the intersection rectangle
+	xA = max(boxA[0], boxB[0])
+	yA = max(boxA[1], boxB[1])
+	xB = min(boxA[2], boxB[2])
+	yB = min(boxA[3], boxB[3])
+
+	# compute the area of intersection rectangle
+	interArea = max(0, xB - xA + 1) * max(0, yB - yA + 1)
+
+	# compute the area of both the prediction and ground-truth
+	# rectangles
+	boxAArea = (boxA[2] - boxA[0] + 1) * (boxA[3] - boxA[1] + 1)
+	boxBArea = (boxB[2] - boxB[0] + 1) * (boxB[3] - boxB[1] + 1)
+
+	# compute the intersection over union by taking the intersection
+	# area and dividing it by the sum of prediction + ground-truth
+	# areas - the interesection area
+	iou = interArea / float(boxAArea + boxBArea - interArea)
+
+	# return the intersection over union value
+	return iou
+
+def _group(detections):
     candidates = []
-    
     for i in range(len(detections)):
-        det1 = detections[i]
-        
-        b1x = det1[0] + (det1[2]-det1[0]) / 2
-        b1y = det1[3]
-
-        pt1 = np.asarray([b1x, b1y], dtype=np.float)
-
         if i in candidates:
             continue
 
         for j in range(len(detections)):
-            if i == j or j in candidates:
-                continue
-
-            det2 = detections[j]
-
-            b2x = det2[0] + (det2[2]-det2[0]) / 2
-            b2y = det2[3]
-
-            pt2 = np.asarray([b2x, b2y], dtype=np.float)
-
-            if _distance(pt1, pt2) < euclid_thresh:
-                candidates.append(i)
-                candidates.append(j)
-
+            if i != j and j not in candidates:
+                if bb_intersection_over_union(detections[i], detections[j]) > 0.0:
+                    candidates.append(i)
+                    candidates.append(j)
     return candidates
 
 def all_same(items):
@@ -239,6 +252,7 @@ while True:
                     cv2.rectangle(frame, (x1, y1), (x2, y2), (255,0,0), 2)
                     detections.append([x1,y1,x2,y2])
 
+        # iou
         group_candidate = _group(detections)
         detections = [detections[i] for i in range(len(detections)) if i not in group_candidate]
 
