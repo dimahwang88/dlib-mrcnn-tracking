@@ -275,7 +275,7 @@ while True:
                 new_label = random.sample(range(50, 100), 1)
                 new_track = cv2.TrackerCSRT_create()
                 new_track.init(frame, (d[0], d[1], d[2]-d[0], d[3]-d[1]))
-                tracker_lst.append((new_track, new_label))
+                tracker_lst.append((new_track, str(new_label)))
 
 	# otherwise, we've already performed detection so let's track
 #	# multiple objects
