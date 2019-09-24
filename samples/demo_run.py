@@ -179,14 +179,13 @@ while True:
     frame = cv2.bitwise_and(frame, mask)
     rgb = cv2.cvtColor(frame, cv2.COLOR_BGR2RGB)
 
-    size = (int(vs.get(cv2.CAP_PROP_FRAME_WIDTH)), int(vs.get(cv2.CAP_PROP_FRAME_HEIGHT)))
+    out_size = (1280,380)
     # if we are supposed to be writing a video to disk, initialize
     # the writer
-
     if args["output"] is not None and writer is None:
         fourcc = cv2.VideoWriter_fourcc(*"MJPG")
         writer = cv2.VideoWriter(args["output"], fourcc, 30,
-            (1820, 380), True)
+            out_size, True)
     # if there are no object trackers we first need to detect objects
     # and then create a tracker for each object
     id_labels = random.sample(range(1, 1000), 100)
@@ -259,28 +258,7 @@ while True:
 
                 if cost_mtx[row,col] > EUCL_THRESH:
                     continue
-#############################################################################################################################################################
-# Work-around
-#                t_pos = t.get_position()
-#
-#                sX = int(t_pos.left())
-#                sY = int(t_pos.top())
-#                eX = int(t_pos.right())
-#                eY = int(t_pos.bottom())
-#
-#                bx = sX / 2
-#                by = eY
-#
-#                dbx = d[0] / 2
-#                dby = d[3]
-#
-#                pt1 = np.asarray([bx, by], dtype=np.float)
-#                pt2 = np.asarray([dbx, dby], dtype=np.float)
-#
-#                if _distance(pt1, pt2) > EUCL_THRESH:
-#                    continue
-#############################################################################################################################################################
-
+                
                 new_track = cv2.TrackerCSRT_create()
                 new_track.init(frame, (d[0], d[1], d[2]-d[0], d[3]-d[1]))
                 tracker_lst[row] = (new_track, label)
@@ -310,7 +288,7 @@ while True:
         cf_track_end = time.time()
         print('CF tracker processing time: ' + str(cf_track_end-cf_track_start) + ' s.')
 
-    frame = cv2.resize(frame, (1820,380))
+    frame = cv2.resize(frame, out_size)
     cv2.putText(frame, 'frame :'+str(frame_number), (80, 80), cv2.FONT_HERSHEY_SIMPLEX, 1, (255,0,0), 2, cv2.LINE_AA)
 
     if writer is not None:
