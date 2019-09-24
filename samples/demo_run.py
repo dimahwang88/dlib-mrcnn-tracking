@@ -158,6 +158,12 @@ def bb_intersection_over_union(boxA, boxB):
 	# return the intersection over union value
 	return iou
 
+def _assign_new_track(d, tracker_lst):
+    new_label = random.sample(range(50, 100), 1)
+    new_track = cv2.TrackerCSRT_create()
+    new_track.init(frame, (d[0], d[1], d[2]-d[0], d[3]-d[1]))
+    tracker_lst.append((new_track, str(new_label[0])))
+
 def _group(detections):
     candidates = []
     for i in range(len(detections)):
@@ -302,6 +308,7 @@ while True:
                 d = detections[col]
 
                 if cost_mtx[row,col] > EUCL_THRESH:
+                    _assign_new_track(d, tracker_lst)
                     continue
                 
                 new_track = cv2.TrackerCSRT_create()
@@ -314,14 +321,8 @@ while True:
             for i in range(len(detections)):
                 if i in col_ind:
                     continue
-
-                d = detections[i]
-                #assign new track
-                new_label = random.sample(range(50, 100), 1)
-                new_track = cv2.TrackerCSRT_create()
-                new_track.init(frame, (d[0], d[1], d[2]-d[0], d[3]-d[1]))
-                tracker_lst.append((new_track, str(new_label)))
-
+                _assign_new_track(detections[i], tracker_lst)
+                
 	# otherwise, we've already performed detection so let's track
 #	# multiple objects
     else:
