@@ -246,7 +246,7 @@ while True:
                 y2 = int(float(currentline[4]))
 
                 if frame_num == frame_number:
-                    cv2.rectangle(frame, (x1, y1), (x2, y2), (255,0,0), 2)
+                    #cv2.rectangle(frame, (x1, y1), (x2, y2), (255,0,0), 2)
                     detections.append([x1,y1,x2,y2])
 
         # iou
