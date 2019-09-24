@@ -179,7 +179,7 @@ while True:
     frame = cv2.bitwise_and(frame, mask)
     rgb = cv2.cvtColor(frame, cv2.COLOR_BGR2RGB)
 
-    out_size = (1820, 600)
+    out_size = (1980, 600)
     # if we are supposed to be writing a video to disk, initialize
     # the writer
     if args["output"] is not None and writer is None:
