@@ -179,7 +179,7 @@ while True:
     frame = cv2.bitwise_and(frame, mask)
     rgb = cv2.cvtColor(frame, cv2.COLOR_BGR2RGB)
 
-    out_size = (1980, 600)
+    out_size = (1980, 560)
     # if we are supposed to be writing a video to disk, initialize
     # the writer
     if args["output"] is not None and writer is None:
@@ -265,6 +265,17 @@ while True:
                 
                 cv2.rectangle(frame, (d[0], d[1]), (d[2], d[3]), (0, 0, 255), 2)
                 cv2.putText(frame, label, (d[0], d[1] - 8), cv2.FONT_HERSHEY_SIMPLEX, 1.5, (255, 0, 0), 3)
+            
+            for i in len(detections):
+                if i in col_ind:
+                    continue
+
+                d = detections[i]
+                #assign new track
+                new_label = random.sample(range(50, 100), 1)
+                new_track = cv2.TrackerCSRT_create()
+                new_track.init(frame, (d[0], d[1], d[2]-d[0], d[3]-d[1]))
+                tracker_lst.append((new_track, new_label))
 
 	# otherwise, we've already performed detection so let's track
 #	# multiple objects
