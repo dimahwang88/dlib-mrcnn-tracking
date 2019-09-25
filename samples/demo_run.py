@@ -352,6 +352,7 @@ while True:
 
                 # check overlap
                 overlpaps = check_track_overlap(track_boxes)
+                print(overlaps)
                 if any(x > 0.4 for x in overlpaps):
                     overlaping_tracks.append(track)
 
