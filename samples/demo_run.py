@@ -234,7 +234,7 @@ while True:
     if frame is None:
         break
 
-    frame = cv2.bitwise_and(frame, mask)
+    #frame = cv2.bitwise_and(frame, mask)
     rgb = cv2.cvtColor(frame, cv2.COLOR_BGR2RGB)
 
     out_size = (1980, 480)
@@ -244,6 +244,7 @@ while True:
         fourcc = cv2.VideoWriter_fourcc(*"MJPG")
         writer = cv2.VideoWriter(args["output"], fourcc, 30,
             out_size, True)
+
     # if there are no object trackers we first need to detect objects
     # and then create a tracker for each object
     id_labels = random.sample(range(1, 1000), 100)
@@ -266,7 +267,7 @@ while True:
                     #cv2.rectangle(frame, (x1, y1), (x2, y2), (255,0,0), 2)
                     detections.append([x1,y1,x2,y2])
 
-        # iou
+        # removing overlaping detections
         group_candidate = _group(detections)
         detections = [detections[i] for i in range(len(detections)) if i not in group_candidate]
 
@@ -282,31 +283,18 @@ while True:
 
                 tracker = cv2.TrackerCSRT_create()
                 tracker.init(frame, (box[0], box[1], box[2]-box[0], box[3]-box[1]))
-
                 tracker_lst.append((tracker, label))
 
                 cv2.rectangle(frame, (startX, startY), (endX, endY), (0, 0, 255), 2)
                 cv2.putText(frame, label, (startX, startY - 8), cv2.FONT_HERSHEY_SIMPLEX, 1.5, (255, 0, 0), 3)
-
-                active_tracks_index.append(i)
         else:
-            # get each detection position
-            # get each created tracker position
-            # create cost matrix where cost is distance between a track and a detection
-            # run hungarian
-            # assign closest box to a track
-
-            # draw detections
+            print(len(tracker_lst))
+            
             for box in detections:
-                sx = box[0]
-                sy = box[1]
-                ex = box[2]
-                ey = box[3]
-                cv2.rectangle(frame, (sx, sy), (ex, ey), (0, 255, 0), 2)
+                cv2.rectangle(frame, (box[0], box[1]), (box[2], box[3]), (0, 255, 0), 2)
 
             cost_mtx = np.zeros((len(tracker_lst), len(detections)))
             del_rows = []
-            active_tracks_index.clear()
 
             for i in range(len(tracker_lst)):
                 cost_mtx[i] = euclidean_dist(tracker_lst[i], detections)
