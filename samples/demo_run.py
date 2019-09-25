@@ -135,10 +135,13 @@ Detection = namedtuple("Detection", ["image_path", "gt", "pred"])
 
 def check_track_overlap(track_boxes):
     cur_box = track_boxes[-1]
+    anchor_box = (cur_box[0], cur_box[1], cur_box[0] + cur_box[2], cur_box[1] + cur_box[3])
     ret = []
+
     for bbox in track_boxes:
         if bbox != cur_box:
-            iou = bb_intersection_over_union(cur_box, bbox)
+            bbox_tup = (bbox[0], bbox[1], bbox[0] + bbox[2], bbox[1] + bbox[3])
+            iou = bb_intersection_over_union(anchor_box, bbox_tup)
             ret.append(iou)
     return ret
         
