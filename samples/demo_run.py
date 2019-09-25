@@ -208,9 +208,6 @@ def euclidean_dist(frame, track, detections):
     _, bbox = t.update(frame)
     (x, y, w, h) = bbox
     
-    d = (int(bbox[0]), int(bbox[1]), int(bbox[0]+bbox[2]), int(bbox[1]+bbox[3]))
-    draw_track(frame, d, l, (255,0,255))
-
     bx = x + w / 2
     by = y + h
 
@@ -316,6 +313,10 @@ while True:
                 d = detections[col]
 
                 if cost_mtx[row,col] > EUCL_THRESH:
+                    if frame_number == 156:
+                        tobj, lbl = tracker_lst[row]
+                        if lbl == 17:
+                            print(cost_mtx[row,col])
                     unmatched_dets.add(col)
                     unmatched_tracks.add(row)
                     continue
