@@ -133,6 +133,15 @@ import cv2
 # define the `Detection` object
 Detection = namedtuple("Detection", ["image_path", "gt", "pred"])
 
+def check_track_overlap(track_boxes):
+    cur_box = track_boxes[-1]
+    ret = []
+    for bbox in track_boxes:
+        if bbox != cur_box:
+            iou = bb_intersection_over_union(cur_box, bbox)
+            ret.append(iou)
+    return ret
+        
 def bb_intersection_over_union(boxA, boxB):
 	# determine the (x, y)-coordinates of the intersection rectangle
 	xA = max(boxA[0], boxB[0])
@@ -210,6 +219,7 @@ def euclidean_dist(track, detections):
 
 multi_tracker = cv2.MultiTracker_create()
 tracker_lst = []
+overlaping_tracks = []
 
 while True:
     frame_number = frame_number + 1
@@ -224,7 +234,7 @@ while True:
     frame = cv2.bitwise_and(frame, mask)
     rgb = cv2.cvtColor(frame, cv2.COLOR_BGR2RGB)
 
-    out_size = (1980, 560)
+    out_size = (1980, 480)
     # if we are supposed to be writing a video to disk, initialize
     # the writer
     if args["output"] is not None and writer is None:
@@ -312,6 +322,10 @@ while True:
                 new_track = cv2.TrackerCSRT_create()
                 new_track.init(frame, (d[0], d[1], d[2]-d[0], d[3]-d[1]))
                 tracker_lst[row] = (new_track, label)
+
+                # if new assignment successful remove track from overlap list
+                if new_track in overlaping_tracks:
+                    overlaping_tracks.remove(new_track)
                 
                 cv2.rectangle(frame, (d[0], d[1]), (d[2], d[3]), (0, 0, 255), 2)
                 cv2.putText(frame, label, (d[0], d[1] - 8), cv2.FONT_HERSHEY_SIMPLEX, 1.5, (255, 0, 0), 3)
@@ -326,19 +340,29 @@ while True:
     else:
         cf_track_start = time.time()
 
+        track_boxes = []
+
         for track_obj in tracker_lst:
             track, l = track_obj
-            _, bbox = track.update(frame)
 
-            (x, y, w, h) = bbox
+            if track not in overlaping_tracks:
+                _, bbox = track.update(frame)
+                track_boxes.append(bbox)
 
-            x = int(x)
-            y = int(y)
-            w = int(w)
-            h = int(h)
+                # check overlap
+                overlpaps = check_track_overlap(track_boxes)
+                if any(x > 0.6 for x in overlpaps):
+                    overlaping_tracks.append(track)
 
-            cv2.rectangle(frame, (x, y), (x + w, y + h), (255, 0, 0), 2)
-            cv2.putText(frame, l, (x, y - 8), cv2.FONT_HERSHEY_SIMPLEX, 1.5, (0, 0, 255), 3)
+                (x, y, w, h) = bbox
+
+                x = int(x)
+                y = int(y)
+                w = int(w)
+                h = int(h)
+                
+                cv2.rectangle(frame, (x, y), (x + w, y + h), (255, 0, 0), 2)
+                cv2.putText(frame, l, (x, y - 8), cv2.FONT_HERSHEY_SIMPLEX, 1.5, (0, 0, 255), 3)
 
         cf_track_end = time.time()
         print('CF tracker processing time: ' + str(cf_track_end-cf_track_start) + ' s.')
