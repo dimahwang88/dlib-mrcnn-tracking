@@ -287,7 +287,7 @@ while True:
                 tracker.init(frame, (box[0], box[1], box[2]-box[0], box[3]-box[1]))
                 tracker_lst.append((tracker, label))
 
-                draw_track(frame, d, label, (0,0,255))
+                draw_track(frame, box, label, (0,0,255))
         else:
             for box in detections:
                 cv2.rectangle(frame, (box[0], box[1]), (box[2], box[3]), (0, 255, 0), 2)
