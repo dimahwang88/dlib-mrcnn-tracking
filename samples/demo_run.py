@@ -328,8 +328,9 @@ while True:
             track, l = track_obj
             _, bbox = track.update(frame)
 
-            d = (bbox[0], bbox[1], bbox[0]+bbox[2], bbox[1]+bbox[3])
+            d = (int(bbox[0]), int(bbox[1]), int(bbox[0]+bbox[2]), int(bbox[1]+bbox[3]))
             draw_track(frame, d, l)
+
 #        cf_track_end = time.time()
 #        print('CF tracker processing time: ' + str(cf_track_end-cf_track_start) + ' s.')
 
