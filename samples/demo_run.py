@@ -198,16 +198,18 @@ def all_same(items):
     return all(x == items[0] for x in items)
 
 def _distance(pt1, pt2):
-    dist = 0
     dist = np.linalg.norm(pt1-pt2)
     return dist
 
-def euclidean_dist(track, detections):
+def euclidean_dist(frame, track, detections):
     t, l = track
     _dist_cur_track = np.zeros(len(detections))
     
     _, bbox = t.update(frame)
     (x, y, w, h) = bbox
+    
+    d = (int(bbox[0]), int(bbox[1]), int(bbox[0]+bbox[2]), int(bbox[1]+bbox[3]))
+    draw_track(frame, d, l, (255,0,255))
 
     bx = x + w / 2
     by = y + h
@@ -224,7 +226,6 @@ def euclidean_dist(track, detections):
         pt2 = np.asarray([dbx, dby], dtype=np.float)
         _dist_cur_track[i] = _distance(pt1, pt2)
     
-    #print(_dist_cur_track)
     return _dist_cur_track
 
 multi_tracker = cv2.MultiTracker_create()
@@ -298,7 +299,7 @@ while True:
             cost_mtx = np.zeros((len(tracker_lst), len(detections)))
 
             for i in range(len(tracker_lst)):
-                cost_mtx[i] = euclidean_dist(tracker_lst[i], detections)
+                cost_mtx[i] = euclidean_dist(frame, tracker_lst[i], detections)
             
             row_ind, col_ind = linear_sum_assignment(cost_mtx)
 
@@ -325,15 +326,12 @@ while True:
 
                 draw_track(frame, d, label, (0,0,255))
     else:
-#        cf_track_start = time.time()
         for track_obj in tracker_lst:
             track, l = track_obj
             _, bbox = track.update(frame)
 
             d = (int(bbox[0]), int(bbox[1]), int(bbox[0]+bbox[2]), int(bbox[1]+bbox[3]))
             draw_track(frame, d, l)
-#        cf_track_end = time.time()
-#        print('CF tracker processing time: ' + str(cf_track_end-cf_track_start) + ' s.')
 
     frame = cv2.resize(frame, out_size)
     cv2.putText(frame, 'frame :'+str(frame_number), (80, 80), cv2.FONT_HERSHEY_SIMPLEX, 1, (255,0,0), 2, cv2.LINE_AA)
