@@ -89,8 +89,6 @@ ap.add_argument("-d", "--det_file", type=str,
 	help="path to detection txt file")
 ap.add_argument("-mask", "--mask_path", type=str,
 	help="path to mask txt file")
-ap.add_argument("-dd", "--det_txt_file", type=str,
-	help="path to detection txt file")
 
 args = vars(ap.parse_args())
 
@@ -241,7 +239,7 @@ while True:
         detections = []
 
         # reading detections from txt file
-        with open(args["det_txt_file"], "r") as f:
+        with open(args["det_file"], "r") as f:
             for line in f:
                 currentline = line.split(",")
                 frame_num = int(currentline[0])
