@@ -302,6 +302,10 @@ while True:
 
             for i in range(len(tracker_lst)):
                 if i not in row_ind:
+                    if frame_number == 156:
+                        tobj, lbl = tracker_lst[i]
+                        if lbl == 17:
+                            print(cost_mtx[i])
                     unmatched_tracks.add(i)
 
             for i in range(len(detections)):
@@ -313,10 +317,6 @@ while True:
                 d = detections[col]
 
                 if cost_mtx[row,col] > EUCL_THRESH:
-                    if frame_number == 156:
-                        tobj, lbl = tracker_lst[row]
-                        if lbl == 17:
-                            print(cost_mtx[row,col])
                     unmatched_dets.add(col)
                     unmatched_tracks.add(row)
                     continue
