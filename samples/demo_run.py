@@ -133,6 +133,9 @@ import cv2
 # define the `Detection` object
 Detection = namedtuple("Detection", ["image_path", "gt", "pred"])
 
+def detection_step(frame_number):
+    return frame_number == 1 or frame_number % 6 == 0
+
 def draw_track(frame, d, l, color=(255,0,0)):
     cv2.rectangle(frame, (d[0], d[1]), (d[2], d[3]), color, 2)
     cv2.putText(frame, l, (d[0], d[1] - 8), cv2.FONT_HERSHEY_SIMPLEX, 1.5, color, 3)
@@ -256,7 +259,7 @@ while True:
     # and then create a tracker for each object
     id_labels = random.sample(range(1, 1000), 100)
 
-    if frame_number == 1 or frame_number % 6 == 0:
+    if detection_step(frame_number) == True:
         detections = []
 
         # reading detections from txt file
@@ -312,7 +315,8 @@ while True:
                 d = detections[col]
 
                 if cost_mtx[row,col] > EUCL_THRESH:
-                    _assign_new_track(d, tracker_lst)
+                    unmatched_dets.add(col)
+                    unmatched_tracks.add(row)
                     continue
                 
                 new_track = cv2.TrackerCSRT_create()
@@ -320,17 +324,14 @@ while True:
                 tracker_lst[row] = (new_track, label)
 
                 draw_track(frame, d, label, (0,0,255))
-
     else:
 #        cf_track_start = time.time()
-
         for track_obj in tracker_lst:
             track, l = track_obj
             _, bbox = track.update(frame)
 
             d = (int(bbox[0]), int(bbox[1]), int(bbox[0]+bbox[2]), int(bbox[1]+bbox[3]))
             draw_track(frame, d, l)
-
 #        cf_track_end = time.time()
 #        print('CF tracker processing time: ' + str(cf_track_end-cf_track_start) + ' s.')
 
