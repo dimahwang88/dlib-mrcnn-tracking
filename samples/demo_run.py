@@ -327,8 +327,9 @@ while True:
                 tracker_lst[row] = (new_track, label)
 
                 # if new assignment successful remove track from overlap list
-                if new_track in overlaping_tracks:
-                    overlaping_tracks.remove(new_track)
+                if label in overlaping_tracks:
+                    print('[DEBUG] Removed a track ')
+                    overlaping_tracks.remove(l)
                 
                 cv2.rectangle(frame, (d[0], d[1]), (d[2], d[3]), (0, 0, 255), 2)
                 cv2.putText(frame, label, (d[0], d[1] - 8), cv2.FONT_HERSHEY_SIMPLEX, 1.5, (255, 0, 0), 3)
@@ -349,15 +350,15 @@ while True:
         for track_obj in tracker_lst:
             track, l = track_obj
 
-            if track not in overlaping_tracks:
+            if l not in overlaping_tracks:
                 _, bbox = track.update(frame)
                 track_boxes.append(bbox)
 
                 # check overlap
                 overlpaps = check_track_overlap(track_boxes)
-                print(overlpaps)
-                if any(x > 0.4 for x in overlpaps):
-                    overlaping_tracks.append(track)
+
+                if any(x > 0.8 for x in overlpaps):
+                    overlaping_tracks.append(l)
 
                 (x, y, w, h) = bbox
 
