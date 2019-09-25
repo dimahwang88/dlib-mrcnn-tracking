@@ -340,6 +340,7 @@ while True:
     else:
         cf_track_start = time.time()
 
+        print(overlaping_tracks)
         track_boxes = []
 
         for track_obj in tracker_lst:
