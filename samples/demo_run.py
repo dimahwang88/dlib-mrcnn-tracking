@@ -318,6 +318,8 @@ while True:
 
             cost_mtx = compute_cost_matrix(frame, tracker_lst, detections)
             print(cost_mtx)
+            print(len(tracker_lst), len(detections))
+            print(cost_mtx.shape)
 
             row_ind, col_ind = linear_sum_assignment(cost_mtx)
 
