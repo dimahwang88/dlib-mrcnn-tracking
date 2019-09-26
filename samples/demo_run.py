@@ -335,11 +335,14 @@ while True:
 
                 # draw 8th detection
                 d = detections[8]
-                cv2.rectangle(frame, (d[0], d[1]), (d[2], d[3]), (128, 255, 20), 2)
+                cv2.rectangle(frame, (d[0], d[1]), (d[2], d[3]), (128, 0, 20), 2)
+
+                trobj, lbl = tracker_lst[16]
+                _, bbox = trobj.update(frame)
+
+                cv2.rectangle(frame, (int(bbox[0]), int(bbox[1])), (int(bbox[0]+bbox[2]), int(bbox[1]+bbox[3])), (0, 0, 255), 2)
                 cv2.imwrite('dbg.jpg', frame)
                 
-                
-
             for row, col in zip(row_ind, col_ind):
                 t, label = tracker_lst[row]
                 d = detections[col]
