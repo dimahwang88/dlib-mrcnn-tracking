@@ -123,7 +123,7 @@ active_tracks_index = []
 fps = FPS().start()
 frame_number = 0
 
-EUCL_THRESH = 30
+EUCL_THRESH = 10
 DIST_INFINITE = 100000
 
 # import the necessary packages
@@ -246,7 +246,6 @@ def compute_cost_matrix(frame, trackers, detections):
         
     cost_mtx = distance.cdist(track_coords, det_coords, 'euclidean')
     cost_mtx[cost_mtx > EUCL_THRESH] = DIST_INFINITE
-
     return cost_mtx
 
 
@@ -315,10 +314,19 @@ while True:
 
                 draw_track(frame, box, label, (0,0,255))
         else:
+            active_tracks_index = []
+
             for box in detections:
                 cv2.rectangle(frame, (box[0], box[1]), (box[2], box[3]), (0, 255, 0), 2)
 
             cost_mtx = compute_cost_matrix(frame, tracker_lst, detections)
+            
+            for row in range(cost_mtx.shape[0]):
+                if np.all(cost_mtx[row] == DIST_INFINITE, axis=0):
+                    cost_mtx = np.delete(cost_mtx, row, axis=0)
+                else:
+                    active_tracks_index.append(row)
+
             row_ind, col_ind = linear_sum_assignment(cost_mtx)
 
             for i in range(len(tracker_lst)):
@@ -348,12 +356,12 @@ while True:
                 cv2.imwrite('dbg.jpg', frame)
                 
             for row, col in zip(row_ind, col_ind):
-                t, label = tracker_lst[row]
+                t, label = tracker_lst[active_tracks_index[row]]
                 d = detections[col]
                 
                 new_track = cv2.TrackerCSRT_create()
                 new_track.init(frame, (d[0], d[1], d[2]-d[0], d[3]-d[1]))
-                tracker_lst[row] = (new_track, label)
+                tracker_lst[active_tracks_index[row]] = (new_track, label)
  
                 draw_track(frame, d, label, (0,0,255))
     else:
