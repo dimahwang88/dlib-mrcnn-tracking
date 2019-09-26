@@ -321,23 +321,29 @@ while True:
 
             for i in range(len(tracker_lst)):
                 if i not in row_ind:
-                    if frame_number == 156:
-                        tobj, lbl = tracker_lst[i]
-                        if lbl == '17':
-                            print(cost_mtx[i])
                     unmatched_tracks.add(i)
 
             for i in range(len(detections)):
                 if i not in col_ind:
                     unmatched_dets.add(i)
 
+            if frame_num == 156:
+                for row, col in zip(row_ind, col_ind):
+                    print(row, col)
+
+                # draw 8th detection
+                d = detections[8]
+                cv2.rectangle(frame, (d[0], d[1]), (d[2], d[3]), (128, 255, 20), 2)
+                
+                
+
             for row, col in zip(row_ind, col_ind):
                 t, label = tracker_lst[row]
                 d = detections[col]
 
                 if cost_mtx[row,col] > EUCL_THRESH:
-                    if frame_number == 156:
-                        print(cost_mtx[:,8])
+                    #if frame_number == 156:
+                    #    print(cost_mtx[:,8])
 
                         #if label == '17':
                         #    print(cost_mtx[row])
