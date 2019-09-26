@@ -339,7 +339,7 @@ while True:
                     if frame_number == 156:
                         tobj, label = tracker_lst[row]
                         if label == '17':
-                            print(row)
+                            print(cost_mtx[row])
                             #print(col_ind)
                             #print(row_ind)
 
