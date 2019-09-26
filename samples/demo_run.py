@@ -124,7 +124,7 @@ fps = FPS().start()
 frame_number = 0
 
 EUCL_THRESH = 30
-DIST_INFINITE = 10000
+DIST_INFINITE = 100000
 
 # import the necessary packages
 from collections import namedtuple
@@ -245,6 +245,8 @@ def compute_cost_matrix(frame, trackers, detections):
         det_coords.append((det[0]+w/2,det[3]))
         
     cost_mtx = distance.cdist(track_coords, det_coords, 'euclidean')
+    cost_mtx[cost_mtx > EUCL_THRESH] = DIST_INFINITE
+
     return cost_mtx
 
 
@@ -348,20 +350,6 @@ while True:
             for row, col in zip(row_ind, col_ind):
                 t, label = tracker_lst[row]
                 d = detections[col]
-
-                if cost_mtx[row,col] > EUCL_THRESH:
-                    #if frame_number == 156:
-                    #    print(cost_mtx[:,8])
-
-                        #if label == '17':
-                        #    print(cost_mtx[row])
-                        #    print(cost_mtx[row,col])
-                            #print(col_ind)
-                            #print(row_ind)
-
-                    unmatched_dets.add(col)
-                    unmatched_tracks.add(row)
-                    continue
                 
                 new_track = cv2.TrackerCSRT_create()
                 new_track.init(frame, (d[0], d[1], d[2]-d[0], d[3]-d[1]))
