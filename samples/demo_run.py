@@ -328,6 +328,8 @@ while True:
                     unmatched_dets.add(i)
 
             if frame_num == 156:
+                print('frame 156')
+                print(row_ind.shape, col_ind.shape)
                 for row, col in zip(row_ind, col_ind):
                     print(row, col)
 
