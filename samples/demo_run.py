@@ -337,7 +337,6 @@ while True:
 
                 if cost_mtx[row,col] > EUCL_THRESH:
                     if frame_number == 156:
-                        tobj, label = tracker_lst[row]
                         if label == '17':
                             print(cost_mtx[row])
                             #print(col_ind)
