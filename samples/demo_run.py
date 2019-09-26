@@ -26,6 +26,7 @@ import random
 # Hungarian assignment
 #from sklearn.utils.linear_assignment_ import linear_assignment
 #from scipy.optimize.linear_sum_assignment import linear_sum_assignment
+from scipy.spatial import distance
 from scipy.optimize import linear_sum_assignment
 
 #ROOT_DIR = os.path.abspath("../")
@@ -290,6 +291,15 @@ while True:
 
                 draw_track(frame, box, label, (0,0,255))
         else:
+            # sanity check
+            a = [(0,0), (5,5), (1,1)]
+            b = [(1,0), (0,0), (8,8), (4,4)]
+
+            out = distance.cdist(a,b, 'euclidean')
+            print(out.shape)
+            print(out)
+
+
             for box in detections:
                 cv2.rectangle(frame, (box[0], box[1]), (box[2], box[3]), (0, 255, 0), 2)
 
@@ -318,9 +328,11 @@ while True:
 
                 if cost_mtx[row,col] > EUCL_THRESH:
                     if frame_number == 156:
-                        tobj, lbl = tracker_lst[i]
-                        if lbl == '17':
-                            print(cost_mtx[i])
+                        tobj, label = tracker_lst[row]
+                        if label == '17':
+                            print(row)
+                            print(col_ind)
+                            print(row_ind)
 
                     unmatched_dets.add(col)
                     unmatched_tracks.add(row)
@@ -329,7 +341,7 @@ while True:
                 new_track = cv2.TrackerCSRT_create()
                 new_track.init(frame, (d[0], d[1], d[2]-d[0], d[3]-d[1]))
                 tracker_lst[row] = (new_track, label)
-
+ 
                 draw_track(frame, d, label, (0,0,255))
     else:
         for track_obj in tracker_lst:
