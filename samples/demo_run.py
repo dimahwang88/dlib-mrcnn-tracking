@@ -122,7 +122,7 @@ labels = []
 fps = FPS().start()
 frame_number = 0
 
-EUCL_THRESH = 20
+EUCL_THRESH = 30
 DIST_INFINITE = 100000
 
 # import the necessary packages
@@ -330,9 +330,8 @@ while True:
             cost_mtx = np.delete(cost_mtx, remove_rows, axis=0)
             row_ind, col_ind = linear_sum_assignment(cost_mtx)
 
-            for i in range(len(tracker_lst)):
-                if i not in row_ind:
-                    unmatched_tracks.add(i)
+            for index in remove_rows:
+                unmatched_tracks.append(index)
 
             for i in range(len(detections)):
                 if i not in col_ind:
@@ -345,8 +344,11 @@ while True:
                 new_track = cv2.TrackerCSRT_create()
                 new_track.init(frame, (d[0], d[1], d[2]-d[0], d[3]-d[1]))
                 tracker_lst[active_tracks_index[row]] = (new_track, label)
- 
                 draw_track(frame, d, label, (0,0,255))
+
+            for det_index in unmatched_dets:
+                _assign_new_track(detections[det_index], tracker_lst)
+
     else:
         for track_obj in tracker_lst:
             track, l = track_obj
