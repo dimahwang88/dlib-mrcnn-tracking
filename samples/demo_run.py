@@ -337,9 +337,11 @@ while True:
 
                 if cost_mtx[row,col] > EUCL_THRESH:
                     if frame_number == 156:
-                        if label == '17':
-                            print(cost_mtx[row])
-                            print(cost_mtx[row,col])
+                        print(cost_mtx[:,8])
+
+                        #if label == '17':
+                        #    print(cost_mtx[row])
+                        #    print(cost_mtx[row,col])
                             #print(col_ind)
                             #print(row_ind)
 
