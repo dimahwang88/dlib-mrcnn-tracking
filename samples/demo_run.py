@@ -226,6 +226,28 @@ def euclidean_dist(frame, track, detections):
     
     return _dist_cur_track
 
+def compute_cost_matrix(frame, trackers, detections):
+    # compute coordinates of bottom middle point for both trackers and detections
+    # create list of tuples of coordinates
+    track_coords = []
+    det_coords = []
+
+    cost_mtx = np.zeros((len(trackers), len(detections)))
+
+    for tobj in trackers:
+        t, lbl = tobj
+        _, pos = t.update(frame)
+        (x,y,w,h) = pos
+        track_coords.append((x+w/2,y+h))
+    
+    for det in detections:
+        w = (det[2]-det[0])
+        det_coords.append((det[0]+w/2,det[3]))
+        
+    cost_mtx = distance.cdist(track_coords, det_coords, 'euclidean')
+    return cost_mtx
+
+
 multi_tracker = cv2.MultiTracker_create()
 tracker_lst = []
 unmatched_tracks = set()
@@ -291,23 +313,12 @@ while True:
 
                 draw_track(frame, box, label, (0,0,255))
         else:
-            # sanity check
-            a = [(0,0), (5,5), (1,1)]
-            b = [(1,0), (0,0), (8,8), (4,4)]
-
-            out = distance.cdist(a,b, 'euclidean')
-            print(out.shape)
-            print(out)
-
-
             for box in detections:
                 cv2.rectangle(frame, (box[0], box[1]), (box[2], box[3]), (0, 255, 0), 2)
 
-            cost_mtx = np.zeros((len(tracker_lst), len(detections)))
+            cost_mtx = compute_cost_matrix(tracker_lst, detections)
+            print(cost_mtx)
 
-            for i in range(len(tracker_lst)):
-                cost_mtx[i] = euclidean_dist(frame, tracker_lst[i], detections)
-            
             row_ind, col_ind = linear_sum_assignment(cost_mtx)
 
             for i in range(len(tracker_lst)):
