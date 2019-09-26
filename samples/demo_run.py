@@ -315,6 +315,7 @@ while True:
                 draw_track(frame, box, label, (0,0,255))
         else:
             active_tracks_index = []
+            remove_rows = []
 
             for box in detections:
                 cv2.rectangle(frame, (box[0], box[1]), (box[2], box[3]), (0, 255, 0), 2)
@@ -323,10 +324,12 @@ while True:
             
             for row in range(cost_mtx.shape[0]):
                 if np.all(cost_mtx[row] == DIST_INFINITE, axis=0):
-                    cost_mtx = np.delete(cost_mtx, row, axis=0)
+                    # cost_mtx = np.delete(cost_mtx, row, axis=0)
+                    remove_rows.append(row)
                 else:
                     active_tracks_index.append(row)
 
+            cost_mtx = np.delete(cost_mtx, remove_rows, axis=0)
             row_ind, col_ind = linear_sum_assignment(cost_mtx)
 
             for i in range(len(tracker_lst)):
