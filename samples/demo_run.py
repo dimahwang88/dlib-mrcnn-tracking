@@ -331,7 +331,7 @@ while True:
             row_ind, col_ind = linear_sum_assignment(cost_mtx)
 
             for index in remove_rows:
-                unmatched_tracks.append(index)
+                unmatched_tracks.add(index)
 
             for i in range(len(detections)):
                 if i not in col_ind:
