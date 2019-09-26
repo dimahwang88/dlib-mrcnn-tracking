@@ -316,7 +316,7 @@ while True:
             for box in detections:
                 cv2.rectangle(frame, (box[0], box[1]), (box[2], box[3]), (0, 255, 0), 2)
 
-            cost_mtx = compute_cost_matrix(tracker_lst, detections)
+            cost_mtx = compute_cost_matrix(frame, tracker_lst, detections)
             print(cost_mtx)
 
             row_ind, col_ind = linear_sum_assignment(cost_mtx)
