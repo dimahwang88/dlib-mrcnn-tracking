@@ -339,8 +339,10 @@ while True:
 
                 trobj, lbl = tracker_lst[16]
                 _, bbox = trobj.update(frame)
-
-                cv2.rectangle(frame, (int(bbox[0]), int(bbox[1])), (int(bbox[0]+bbox[2]), int(bbox[1]+bbox[3])), (0, 0, 255), 2)
+                
+                d = (int(bbox[0]), int(bbox[1]), int(bbox[0]+bbox[2]), int(bbox[1]+bbox[3]))
+                #cv2.rectangle(frame, (int(bbox[0]), int(bbox[1])), (int(bbox[0]+bbox[2]), int(bbox[1]+bbox[3])), (0, 0, 255), 2)
+                draw_track(frame, d, lbl, (0, 0, 255))
                 cv2.imwrite('dbg.jpg', frame)
                 
             for row, col in zip(row_ind, col_ind):
