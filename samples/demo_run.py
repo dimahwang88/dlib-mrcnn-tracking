@@ -339,6 +339,7 @@ while True:
                     if frame_number == 156:
                         if label == '17':
                             print(cost_mtx[row])
+                            print(cost[row,col])
                             #print(col_ind)
                             #print(row_ind)
 
