@@ -123,7 +123,7 @@ active_tracks_index = []
 fps = FPS().start()
 frame_number = 0
 
-EUCL_THRESH = 10
+EUCL_THRESH = 20
 DIST_INFINITE = 100000
 
 # import the necessary packages
