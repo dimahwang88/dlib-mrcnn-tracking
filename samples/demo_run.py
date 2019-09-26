@@ -317,10 +317,6 @@ while True:
                 cv2.rectangle(frame, (box[0], box[1]), (box[2], box[3]), (0, 255, 0), 2)
 
             cost_mtx = compute_cost_matrix(frame, tracker_lst, detections)
-            print(cost_mtx)
-            print(len(tracker_lst), len(detections))
-            print(cost_mtx.shape)
-
             row_ind, col_ind = linear_sum_assignment(cost_mtx)
 
             for i in range(len(tracker_lst)):
@@ -344,8 +340,8 @@ while True:
                         tobj, label = tracker_lst[row]
                         if label == '17':
                             print(row)
-                            print(col_ind)
-                            print(row_ind)
+                            #print(col_ind)
+                            #print(row_ind)
 
                     unmatched_dets.add(col)
                     unmatched_tracks.add(row)
