@@ -117,7 +117,6 @@ writer = None
 # labels
 trackers = []
 labels = []
-active_tracks_index = []
 
 # start the frames per second throughput estimator
 fps = FPS().start()
@@ -324,7 +323,6 @@ while True:
             
             for row in range(cost_mtx.shape[0]):
                 if np.all(cost_mtx[row] == DIST_INFINITE, axis=0):
-                    # cost_mtx = np.delete(cost_mtx, row, axis=0)
                     remove_rows.append(row)
                 else:
                     active_tracks_index.append(row)
@@ -340,24 +338,6 @@ while True:
                 if i not in col_ind:
                     unmatched_dets.add(i)
 
-            if frame_number == 156:
-                print('frame 156')
-                print(row_ind.shape, col_ind.shape)
-                for row, col in zip(row_ind, col_ind):
-                    print(row, col)
-
-                # draw 8th detection
-                d = detections[8]
-                cv2.rectangle(frame, (d[0], d[1]), (d[2], d[3]), (128, 0, 20), 2)
-
-                trobj, lbl = tracker_lst[16]
-                _, bbox = trobj.update(frame)
-                
-                d = (int(bbox[0]), int(bbox[1]), int(bbox[0]+bbox[2]), int(bbox[1]+bbox[3]))
-                #cv2.rectangle(frame, (int(bbox[0]), int(bbox[1])), (int(bbox[0]+bbox[2]), int(bbox[1]+bbox[3])), (0, 0, 255), 2)
-                #draw_track(frame, d, lbl, (0, 0, 255))
-                cv2.imwrite('dbg.jpg', frame)
-                
             for row, col in zip(row_ind, col_ind):
                 t, label = tracker_lst[active_tracks_index[row]]
                 d = detections[col]
