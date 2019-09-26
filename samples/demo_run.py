@@ -334,6 +334,7 @@ while True:
                 # draw 8th detection
                 d = detections[8]
                 cv2.rectangle(frame, (d[0], d[1]), (d[2], d[3]), (128, 255, 20), 2)
+                cv2.imwrite('dbg.jpg', frame)
                 
                 
 
