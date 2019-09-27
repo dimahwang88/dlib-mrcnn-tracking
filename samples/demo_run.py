@@ -356,14 +356,14 @@ while True:
             
             # assign redundant tracks to closest of unmatched detections
             for index in redundant_tracks:
-                trobj, label = tracker_lst[index]
+                _, label = tracker_lst[index]
 
                 dists = []
                 dist2index = {}
                 
                 for det_index in unmatched_dets:
                     d = detections[det_index]
-                    dist = euclidean_dist(frame, trobj, [d])
+                    dist = euclidean_dist(frame, tracker_lst[index], [d])
                     
                     dists.append(dist[0])
                     dist2index[dist[0]] = det_index
