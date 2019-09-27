@@ -345,11 +345,14 @@ while True:
                 t, label = tracker_lst[active_tracks_index[row]]
                 d = detections[col]
 
-                if frame_number == 306 and label == '17':
-                    print(cost_mtx[row])
-                    print(row, col)
+                dist = euclidean_dist(frame, track, [d])
+                if dist[0] > EUCL_THRESH:   continue
+
+                #if frame_number == 306 and label == '17':
+                #    print(cost_mtx[row])
+                #    print(row, col)
                 
-#                _dbg_draw_assignment(frame, frame_number, detections, tracker_lst, label, cost_mtx, row_ind, col_ind)
+                #_dbg_draw_assignment(frame, tracker_lst[active_tracks_index[row]], d)
 
                 new_track = cv2.TrackerCSRT_create()
                 new_track.init(frame, (d[0], d[1], d[2]-d[0], d[3]-d[1]))
