@@ -368,11 +368,12 @@ while True:
                     dists.append(dist[0])
                     dist2index[dist[0]] = det_index
 
+                if len(dists) == 0: continue
                 # find min in dists & assign current trobj to it
                 mindist = min(dists)
 
                 if mindist > 100: continue
-                
+
                 min_det_index = dist2index[mindist]
                 det = detections[min_det_index]
 
