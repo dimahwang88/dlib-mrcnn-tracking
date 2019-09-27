@@ -327,9 +327,9 @@ while True:
                 else:
                     active_tracks_index.append(row)
 
-            if frame_number == 306:
-                print(remove_rows)
-                print(active_tracks_index)
+#            if frame_number == 306:
+#                print(remove_rows)
+#                print(active_tracks_index)
 
             cost_mtx = np.delete(cost_mtx, remove_rows, axis=0)
             row_ind, col_ind = linear_sum_assignment(cost_mtx)
