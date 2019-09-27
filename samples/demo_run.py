@@ -366,37 +366,27 @@ while True:
             
             unmatched_dets.clear()
     else:
-        for track_obj in tracker_lst:
-            for index in redundant_tracks:
-                if track_obj == tracker_lst[index]: continue
+        tlbr_pos_lst = []
+        pos2index = {}
 
-            track, l = track_obj
-            _, bbox = track.update(frame)
-            d = (int(bbox[0]), int(bbox[1]), int(bbox[0]+bbox[2]), int(bbox[1]+bbox[3]))
-            draw_track(frame, d, l)
-
-        # check iou of tracks
-        for i in range(len(tracker_lst)):
-            cur_trobj = tracker_lst[i]
-            cur_t, cur_lbl = cur_trobj
-            _, cur_pos = cur_t.update(frame)
-            (x,y,w,h) = cur_pos
-            cur_tlbr = (x,y,x+w,x+h)
+        for index in range(len(tracker_lst)):
+            if index in redundant_tracks:   continue
             
-            for j in range(len(tracker_lst)):
-                if i != j:
-                    trobj = tracker_lst[j]
-                    tr, _ = trobj
-                    _, p = tr.update(frame)
-                    (_x, _y, _w, _h) = p 
-                    _tlbr = (_x, _y, _x+_w, _y+_h)
+            track, l = tracker_lst[index]
+            _, bbox = track.update(frame)
 
-                    iou = bb_intersection_over_union(cur_tlbr, _tlbr)
+            tlbr = (int(bbox[0]), int(bbox[1]), int(bbox[0]+bbox[2]), int(bbox[1]+bbox[3]))
+            tlbr_pos_lst.append(tlbr)
+            pos2index[tlbr] = index
 
-                    # check iou
+            draw_track(frame, tlbr, l)
+
+        for pos1 in tlbr_pos_lst:
+            for pos2 in tlbr_pos_lst:
+                if pos1 != pos2:
+                    iou = bb_intersection_over_union(pos1, pos2)
                     if iou > 0.7:
-                        # 2 trackers at same location
-                        redundant_tracks.add(j)
+                        redundant_tracks.add(pos2index[pos2])
 
     frame = cv2.resize(frame, out_size)
     cv2.putText(frame, 'frame :'+str(frame_number), (80, 80), cv2.FONT_HERSHEY_SIMPLEX, 1, (255,0,0), 2, cv2.LINE_AA)
