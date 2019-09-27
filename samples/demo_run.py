@@ -345,8 +345,9 @@ while True:
                 t, label = tracker_lst[active_tracks_index[row]]
                 d = detections[col]
 
-                #if frame_number == 306 and label == '17':
-                #    print(cost_mtx[row])
+                if frame_number == 306 and label == '17':
+                    print(cost_mtx[row])
+                    print(row, col)
                 
 #                _dbg_draw_assignment(frame, frame_number, detections, tracker_lst, label, cost_mtx, row_ind, col_ind)
 
