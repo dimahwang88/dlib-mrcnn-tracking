@@ -340,6 +340,9 @@ while True:
             for row, col in zip(row_ind, col_ind):
                 t, label = tracker_lst[active_tracks_index[row]]
                 d = detections[col]
+
+                if frame_number == 306 and label == '17':
+                    print(cost_mtx[row])
                 
                 new_track = cv2.TrackerCSRT_create()
                 new_track.init(frame, (d[0], d[1], d[2]-d[0], d[3]-d[1]))
