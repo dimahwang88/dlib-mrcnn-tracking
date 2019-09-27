@@ -346,7 +346,10 @@ while True:
                 d = detections[col]
 
                 dist = euclidean_dist(frame, tracker_lst[active_tracks_index[row]], [d])
-                if dist[0] > EUCL_THRESH:   continue
+                if dist[0] > EUCL_THRESH:   
+                    unmatched_tracks.add(active_tracks_index[row])
+                    unmatched_dets.add(col)
+                    continue
 
                 #if frame_number == 306 and label == '17':
                 #    print(cost_mtx[row])
