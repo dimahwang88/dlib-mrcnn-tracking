@@ -345,7 +345,7 @@ while True:
                 t, label = tracker_lst[active_tracks_index[row]]
                 d = detections[col]
 
-                dist = euclidean_dist(frame, track, [d])
+                dist = euclidean_dist(frame, tracker_lst[active_tracks_index[row]], [d])
                 if dist[0] > EUCL_THRESH:   continue
 
                 #if frame_number == 306 and label == '17':
