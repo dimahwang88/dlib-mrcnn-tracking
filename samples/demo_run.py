@@ -355,7 +355,7 @@ while True:
                 draw_track(frame, d, label, (0,0,255))
             
             # assign redundant tracks to closest of unmatched detections
-            for index in redundant_tracks:
+            for index in redundant_tracks.copy():
                 _, label = tracker_lst[index]
 
                 dists = []
