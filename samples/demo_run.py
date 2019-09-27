@@ -348,16 +348,39 @@ while True:
                     unmatched_dets.add(col)
                     continue
 
-                #if frame_number == 306 and label == '17':
-                #    print(cost_mtx[row])
-                #    print(row, col)
-                
-                #_dbg_draw_assignment(frame, tracker_lst[active_tracks_index[row]], d)
-
                 new_track = cv2.TrackerCSRT_create()
                 new_track.init(frame, (d[0], d[1], d[2]-d[0], d[3]-d[1]))
                 tracker_lst[active_tracks_index[row]] = (new_track, label)
+
                 draw_track(frame, d, label, (0,0,255))
+            
+            # assign redundant tracks to closest of unmatched detections
+            for index in redundant_tracks:
+                trobj, label = tracker_lst[index]
+
+                dists = []
+                dist2index = {}
+                
+                for det_index in unmatched_dets:
+                    d = detections[det_index]
+                    dist = euclidean_dist(frame, trobj, [d])
+                    
+                    dists.append(dist[0])
+                    dist2index[dist[0]] = det_index
+
+                # find min in dists & assign current trobj to it
+                mindist = min(dists)
+
+                if mindist > 100: continue
+                
+                min_det_index = dist2index[mindist]
+                det = detections[min_det_index]
+
+                new_track = cv2.TrackerCSRT_create()
+                new_track.init(frame, (det[0], det[1], det[2]-det[0], det[3]-det[1]))
+                tracker_lst[index] = (new_track, label)
+
+                redundant_tracks.remove(index)
 
             for det_index in unmatched_dets:
                 # if iou == 0:  assign new track
@@ -387,16 +410,9 @@ while True:
                 pos2 = tlbr_pos_lst[j]
                 iou = bb_intersection_over_union(pos1, pos2)
  
-                if iou > 0.7:
+                if iou > 0.5:
                     redundant_tracks.add(pos2index[pos2])
         
-#        for pos1 in tlbr_pos_lst:
-#            for pos2 in tlbr_pos_lst:
-#                if pos1 != pos2:
-#                    iou = bb_intersection_over_union(pos1, pos2)
-#                    if iou > 0.7:
-#                        redundant_tracks.add(pos2index[pos2])
-
     frame = cv2.resize(frame, out_size)
     cv2.putText(frame, 'frame :'+str(frame_number), (80, 80), cv2.FONT_HERSHEY_SIMPLEX, 1, (255,0,0), 2, cv2.LINE_AA)
 
