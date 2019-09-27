@@ -254,8 +254,9 @@ def compute_cost_matrix(frame, trackers, detections):
 
 multi_tracker = cv2.MultiTracker_create()
 tracker_lst = []
-unmatched_tracks = set()
+#unmatched_tracks = set()
 unmatched_dets = set()
+redundant_tracks = set()
 
 overlaping_tracks = []
 
@@ -334,9 +335,6 @@ while True:
             cost_mtx = np.delete(cost_mtx, remove_rows, axis=0)
             row_ind, col_ind = linear_sum_assignment(cost_mtx)
 
-            for index in remove_rows:
-                unmatched_tracks.add(index)
-
             for i in range(len(detections)):
                 if i not in col_ind:
                     unmatched_dets.add(i)
@@ -347,7 +345,6 @@ while True:
 
                 dist = euclidean_dist(frame, tracker_lst[active_tracks_index[row]], [d])
                 if dist[0] > EUCL_THRESH:   
-                    unmatched_tracks.add(active_tracks_index[row])
                     unmatched_dets.add(col)
                     continue
 
@@ -363,7 +360,6 @@ while True:
                 draw_track(frame, d, label, (0,0,255))
 
             for det_index in unmatched_dets:
-                # check iou with all tracks
                 # if iou == 0:  assign new track
                 if not is_track_pos_overlap(frame, tracker_lst, detections[det_index]):
                     _assign_new_track(detections[det_index], tracker_lst)
@@ -371,11 +367,36 @@ while True:
             unmatched_dets.clear()
     else:
         for track_obj in tracker_lst:
+            for index in redundant_tracks:
+                if track_obj == tracker_lst[index]: continue
+
             track, l = track_obj
             _, bbox = track.update(frame)
-
             d = (int(bbox[0]), int(bbox[1]), int(bbox[0]+bbox[2]), int(bbox[1]+bbox[3]))
             draw_track(frame, d, l)
+
+        # check iou of tracks
+        for i in range(len(tracker_lst)):
+            cur_trobj = tracker_lst[i]
+            cur_t, cur_lbl = cur_trobj
+            _, cur_pos = cur_t.update(frame)
+            (x,y,w,h) = cur_pos
+            cur_tlbr = (x,y,x+w,x+h)
+            
+            for j in range(len(tracker_lst)):
+                if i != j:
+                    trobj = tracker_lst[j]
+                    tr, _ = trobj
+                    _, p = tr.update(frame)
+                    (_x, _y, _w, _h) = p 
+                    _tlbr = (_x, _y, _x+_w, _y+_h)
+
+                    iou = bb_intersection_over_union(cur_tlbr, _tlbr)
+
+                    # check iou
+                    if iou > 0.7:
+                        # 2 trackers at same location
+                        redundant_tracks.add(j)
 
     frame = cv2.resize(frame, out_size)
     cv2.putText(frame, 'frame :'+str(frame_number), (80, 80), cv2.FONT_HERSHEY_SIMPLEX, 1, (255,0,0), 2, cv2.LINE_AA)
