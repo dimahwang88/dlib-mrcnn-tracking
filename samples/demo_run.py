@@ -347,9 +347,9 @@ while True:
                 draw_track(frame, d, label, (0,0,255))
 
             for det_index in unmatched_dets:
-                print(det_index)
                 _assign_new_track(detections[det_index], tracker_lst)
-
+            
+            unmatched_dets.clear()
     else:
         for track_obj in tracker_lst:
             track, l = track_obj
