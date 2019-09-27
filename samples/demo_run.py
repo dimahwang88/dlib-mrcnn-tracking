@@ -122,7 +122,7 @@ labels = []
 fps = FPS().start()
 frame_number = 0
 
-EUCL_THRESH = 30
+EUCL_THRESH = 35
 DIST_INFINITE = 100000
 
 # import the necessary packages
@@ -140,18 +140,22 @@ def draw_track(frame, d, l, color=(255,0,0)):
     cv2.rectangle(frame, (d[0], d[1]), (d[2], d[3]), color, 2)
     cv2.putText(frame, l, (d[0], d[1] - 8), cv2.FONT_HERSHEY_SIMPLEX, 1.5, color, 3)
 
-def check_track_overlap(track_boxes):
-    cur_box = track_boxes[-1]
-    anchor_box = (cur_box[0], cur_box[1], cur_box[0] + cur_box[2], cur_box[1] + cur_box[3])
-    ret = []
+def is_track_pos_overlap(frame, tracker_lst, det_bbox):
+    # check if an existing track is around current detection
+    det_tup = (det_bbox[0], det_bbox[1], det_bbox[2], det_bbox[3])
 
-    for bbox in track_boxes:
-        if bbox != cur_box:
-            bbox_tup = (bbox[0], bbox[1], bbox[0] + bbox[2], bbox[1] + bbox[3])
-            iou = bb_intersection_over_union(anchor_box, bbox_tup)
-            ret.append(iou)
-    return ret
-        
+    for trobj in tracker_lst:
+        t, l = trobj
+        _, pos = t.update(frame)
+        (x,y,w,h) = pos
+        tr_tup = (x,y,x+w,y+h)
+
+        iou = bb_intersection_over_union(tr_tup, det_tup)
+
+        if iou > 0.1:
+            return True    
+    return False
+
 def bb_intersection_over_union(boxA, boxB):
 	# determine the (x, y)-coordinates of the intersection rectangle
 	xA = max(boxA[0], boxB[0])
@@ -327,10 +331,6 @@ while True:
                 else:
                     active_tracks_index.append(row)
 
-#            if frame_number == 306:
-#                print(remove_rows)
-#                print(active_tracks_index)
-
             cost_mtx = np.delete(cost_mtx, remove_rows, axis=0)
             row_ind, col_ind = linear_sum_assignment(cost_mtx)
 
@@ -363,7 +363,10 @@ while True:
                 draw_track(frame, d, label, (0,0,255))
 
             for det_index in unmatched_dets:
-                _assign_new_track(detections[det_index], tracker_lst)
+                # check iou with all tracks
+                # if iou == 0:  assign new track
+                if not is_track_pos_overlap(frame, tracker_lst, detections[det_index]):
+                    _assign_new_track(detections[det_index], tracker_lst)
             
             unmatched_dets.clear()
     else:
