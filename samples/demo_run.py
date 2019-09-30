@@ -133,7 +133,7 @@ import cv2
 # define the `Detection` object
 Detection = namedtuple("Detection", ["image_path", "gt", "pred"])
 
-def print_id_by_index(tracker_lst, index_lst)
+def print_id_by_index(tracker_lst, index_lst):
     id_lst = []
     for index in index_lst:
         t, l = tracker_lst[index]
