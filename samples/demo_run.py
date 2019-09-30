@@ -340,6 +340,10 @@ while True:
                     unmatched_dets.add(i)
 
             for row, col in zip(row_ind, col_ind):
+                if row in redundant_tracks:
+                    unmatched_dets.add(col)
+                    continue
+
                 t, label = tracker_lst[active_tracks_index[row]]
                 d = detections[col]
 
@@ -392,6 +396,8 @@ while True:
     else:
         tlbr_pos_lst = []
         pos2index = {}
+
+        #print(redundant_tracks)
 
         for index in range(len(tracker_lst)):
             if index in redundant_tracks:   continue
