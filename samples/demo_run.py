@@ -362,7 +362,7 @@ while True:
                 draw_track(frame, d, label, (0,0,255))
 
                 if row in redundant_tracks:
-                    redundant_tracks.remove(row)
+                    redundant_tracks.remove(active_tracks_index[row])
             
             track_match_temp = []
             # assign redundant tracks to closest of unmatched detections
@@ -396,7 +396,7 @@ while True:
 
             for index in track_match_temp:
                 redundant_tracks.remove(index)
-                
+
             for det_index in unmatched_dets:
                 if not is_track_pos_overlap(frame, tracker_lst, detections[det_index]):
                     _assign_new_track(detections[det_index], tracker_lst)
