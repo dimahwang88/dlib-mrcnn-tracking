@@ -376,7 +376,7 @@ while True:
                 # find min in dists & assign current trobj to it
                 mindist = min(dists)
 
-                if mindist > 100: continue
+                #if mindist > 100: continue
 
                 min_det_index = dist2index[mindist]
                 det = detections[min_det_index]
@@ -396,8 +396,6 @@ while True:
     else:
         tlbr_pos_lst = []
         pos2index = {}
-
-        #print(redundant_tracks)
 
         for index in range(len(tracker_lst)):
             if index in redundant_tracks:   continue
