@@ -361,7 +361,7 @@ while True:
 
                 draw_track(frame, d, label, (0,0,255))
 
-                if row in redundant_tracks:
+                if active_tracks_index[row] in redundant_tracks:
                     redundant_tracks.remove(active_tracks_index[row])
             
             track_match_temp = []
