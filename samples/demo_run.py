@@ -347,10 +347,6 @@ while True:
                     unmatched_dets.add(i)
 
             for row, col in zip(row_ind, col_ind):
-                #if row in redundant_tracks:
-                #    unmatched_dets.add(col)
-                #    continue
-
                 t, label = tracker_lst[active_tracks_index[row]]
                 d = detections[col]
 
@@ -364,38 +360,44 @@ while True:
                 tracker_lst[active_tracks_index[row]] = (new_track, label)
 
                 draw_track(frame, d, label, (0,0,255))
+
+                if row in redundant_tracks:
+                    redundant_tracks.remove(row)
             
+            track_match_temp = []
             # assign redundant tracks to closest of unmatched detections
-            # for index in redundant_tracks.copy(): 
-            #     _, label = tracker_lst[index]
+            for index in redundant_tracks: 
+                _, label = tracker_lst[index]
 
-            #     dists = []
-            #     dist2index = {}
-            #     
-            #     for det_index in unmatched_dets:
-            #         d = detections[det_index]
-            #         dist = euclidean_dist(frame, tracker_lst[index], [d])
-            #         
-            #         dists.append(dist[0])
-            #         dist2index[dist[0]] = det_index
+                dists = []
+                dist2index = {}
+                
+                for det_index in unmatched_dets:
+                    d = detections[det_index]
+                    dist = euclidean_dist(frame, tracker_lst[index], [d])
+                    
+                    dists.append(dist[0])
+                    dist2index[dist[0]] = det_index
 
-            #     if len(dists) == 0: continue
-            #     # find min in dists & assign current trobj to it
-            #     mindist = min(dists)
+                    if len(dists) == 0: continue
+                    # find min in dists & assign current trobj to it
+                    mindist = min(dists)
 
-            #     if mindist > 100: continue
+                    if mindist > 100: continue
 
-            #     min_det_index = dist2index[mindist]
-            #     det = detections[min_det_index]
+                    min_det_index = dist2index[mindist]
+                    det = detections[min_det_index]
 
-            #     new_track = cv2.TrackerCSRT_create()
-            #     new_track.init(frame, (det[0], det[1], det[2]-det[0], det[3]-det[1]))
-            #     tracker_lst[index] = (new_track, label)
+                    new_track = cv2.TrackerCSRT_create()
+                    new_track.init(frame, (det[0], det[1], det[2]-det[0], det[3]-det[1]))
+                    tracker_lst[index] = (new_track, label)
 
-            #     redundant_tracks.remove(index)
+                    track_match_temp.append(index)
 
+            for index in track_match_temp:
+                redundant_tracks.remove(index)
+                
             for det_index in unmatched_dets:
-                # if iou == 0:  assign new track
                 if not is_track_pos_overlap(frame, tracker_lst, detections[det_index]):
                     _assign_new_track(detections[det_index], tracker_lst)
             
@@ -407,7 +409,7 @@ while True:
         print_id_by_index(tracker_lst, redundant_tracks)
 
         for index in range(len(tracker_lst)):
-            #if index in redundant_tracks:   continue
+            if index in redundant_tracks:   continue
 
             track, l = tracker_lst[index]
             _, bbox = track.update(frame)
@@ -423,7 +425,7 @@ while True:
             for j in range(i+1, len(tlbr_pos_lst)):                
                 pos2 = tlbr_pos_lst[j]
                 iou = bb_intersection_over_union(pos1, pos2)
-                if iou > 0.5:
+                if iou > 0.55:
                     redundant_tracks.add(pos2index[pos2])
         
     frame = cv2.resize(frame, out_size)
