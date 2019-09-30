@@ -133,6 +133,13 @@ import cv2
 # define the `Detection` object
 Detection = namedtuple("Detection", ["image_path", "gt", "pred"])
 
+def print_id_by_index(tracker_lst, index_lst)
+    id_lst = []
+    for index in index_lst:
+        t, l = tracker_lst[index]
+        id_lst.append(l)
+    print(id_lst)
+
 def detection_step(frame_number):
     return frame_number == 1 or frame_number % 6 == 0
 
@@ -376,7 +383,7 @@ while True:
                 # find min in dists & assign current trobj to it
                 mindist = min(dists)
 
-                #if mindist > 100: continue
+                if mindist > 100: continue
 
                 min_det_index = dist2index[mindist]
                 det = detections[min_det_index]
@@ -396,6 +403,8 @@ while True:
     else:
         tlbr_pos_lst = []
         pos2index = {}
+
+        print_id_by_index(tracker_lst, redundant_tracks)
 
         for index in range(len(tracker_lst)):
             if index in redundant_tracks:   continue
