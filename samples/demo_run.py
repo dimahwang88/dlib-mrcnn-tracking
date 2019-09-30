@@ -404,7 +404,7 @@ while True:
         tlbr_pos_lst = []
         pos2index = {}
 
-        #print_id_by_index(tracker_lst, redundant_tracks)
+        print_id_by_index(tracker_lst, redundant_tracks)
 
         for index in range(len(tracker_lst)):
             #if index in redundant_tracks:   continue
@@ -418,13 +418,13 @@ while True:
 
             draw_track(frame, tlbr, l)
 
-#        for i in range(len(tlbr_pos_lst)):
-#            pos1 = tlbr_pos_lst[i]
-#            for j in range(i+1, len(tlbr_pos_lst)):                
-#                pos2 = tlbr_pos_lst[j]
-#                iou = bb_intersection_over_union(pos1, pos2)
-#                if iou > 0.5:
-#                    redundant_tracks.add(pos2index[pos2])
+        for i in range(len(tlbr_pos_lst)):
+            pos1 = tlbr_pos_lst[i]
+            for j in range(i+1, len(tlbr_pos_lst)):                
+                pos2 = tlbr_pos_lst[j]
+                iou = bb_intersection_over_union(pos1, pos2)
+                if iou > 0.5:
+                    redundant_tracks.add(pos2index[pos2])
         
     frame = cv2.resize(frame, out_size)
     cv2.putText(frame, 'frame :'+str(frame_number), (80, 80), cv2.FONT_HERSHEY_SIMPLEX, 1, (255,0,0), 2, cv2.LINE_AA)
