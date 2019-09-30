@@ -347,9 +347,9 @@ while True:
                     unmatched_dets.add(i)
 
             for row, col in zip(row_ind, col_ind):
-                if row in redundant_tracks:
-                    unmatched_dets.add(col)
-                    continue
+                #if row in redundant_tracks:
+                #    unmatched_dets.add(col)
+                #    continue
 
                 t, label = tracker_lst[active_tracks_index[row]]
                 d = detections[col]
@@ -366,33 +366,33 @@ while True:
                 draw_track(frame, d, label, (0,0,255))
             
             # assign redundant tracks to closest of unmatched detections
-            for index in redundant_tracks.copy():
-                _, label = tracker_lst[index]
+            # for index in redundant_tracks.copy(): 
+            #     _, label = tracker_lst[index]
 
-                dists = []
-                dist2index = {}
-                
-                for det_index in unmatched_dets:
-                    d = detections[det_index]
-                    dist = euclidean_dist(frame, tracker_lst[index], [d])
-                    
-                    dists.append(dist[0])
-                    dist2index[dist[0]] = det_index
+            #     dists = []
+            #     dist2index = {}
+            #     
+            #     for det_index in unmatched_dets:
+            #         d = detections[det_index]
+            #         dist = euclidean_dist(frame, tracker_lst[index], [d])
+            #         
+            #         dists.append(dist[0])
+            #         dist2index[dist[0]] = det_index
 
-                if len(dists) == 0: continue
-                # find min in dists & assign current trobj to it
-                mindist = min(dists)
+            #     if len(dists) == 0: continue
+            #     # find min in dists & assign current trobj to it
+            #     mindist = min(dists)
 
-                if mindist > 100: continue
+            #     if mindist > 100: continue
 
-                min_det_index = dist2index[mindist]
-                det = detections[min_det_index]
+            #     min_det_index = dist2index[mindist]
+            #     det = detections[min_det_index]
 
-                new_track = cv2.TrackerCSRT_create()
-                new_track.init(frame, (det[0], det[1], det[2]-det[0], det[3]-det[1]))
-                tracker_lst[index] = (new_track, label)
+            #     new_track = cv2.TrackerCSRT_create()
+            #     new_track.init(frame, (det[0], det[1], det[2]-det[0], det[3]-det[1]))
+            #     tracker_lst[index] = (new_track, label)
 
-                redundant_tracks.remove(index)
+            #     redundant_tracks.remove(index)
 
             for det_index in unmatched_dets:
                 # if iou == 0:  assign new track
@@ -404,10 +404,10 @@ while True:
         tlbr_pos_lst = []
         pos2index = {}
 
-        print_id_by_index(tracker_lst, redundant_tracks)
+        #print_id_by_index(tracker_lst, redundant_tracks)
 
         for index in range(len(tracker_lst)):
-            if index in redundant_tracks:   continue
+            #if index in redundant_tracks:   continue
 
             track, l = tracker_lst[index]
             _, bbox = track.update(frame)
@@ -418,14 +418,13 @@ while True:
 
             draw_track(frame, tlbr, l)
 
-        for i in range(len(tlbr_pos_lst)):
-            pos1 = tlbr_pos_lst[i]
-            for j in range(i+1, len(tlbr_pos_lst)):                
-                pos2 = tlbr_pos_lst[j]
-                iou = bb_intersection_over_union(pos1, pos2)
- 
-                if iou > 0.5:
-                    redundant_tracks.add(pos2index[pos2])
+#        for i in range(len(tlbr_pos_lst)):
+#            pos1 = tlbr_pos_lst[i]
+#            for j in range(i+1, len(tlbr_pos_lst)):                
+#                pos2 = tlbr_pos_lst[j]
+#                iou = bb_intersection_over_union(pos1, pos2)
+#                if iou > 0.5:
+#                    redundant_tracks.add(pos2index[pos2])
         
     frame = cv2.resize(frame, out_size)
     cv2.putText(frame, 'frame :'+str(frame_number), (80, 80), cv2.FONT_HERSHEY_SIMPLEX, 1, (255,0,0), 2, cv2.LINE_AA)
